@@ -1,6 +1,47 @@
 {
     "version": 4,
     "configurePresets": [
+	{
+            "name": "ubuntu24-environment",
+            "hidden": true,
+            "environment": {
+                "DEPS_ROOT"                     : "/opt/MoonRay/installs",
+                "BUILD_DIR"                     : "${sourceParentDir}/../build",
+                "Boost_ROOT"                    : "$env{DEPS_ROOT}",
+                "Libuuid_ROOT"                  : "$env{DEPS_ROOT}",
+                "CppUnit_ROOT"                  : "$env{DEPS_ROOT}",
+                "ISPC"                          : "$env{DEPS_ROOT}/bin/ispc",
+                "JsonCpp_ROOT"                  : "$env{DEPS_ROOT}",
+                "Libcurl_ROOT"                  : "$env{DEPS_ROOT}",
+                "Log4cplus_ROOT"                : "$env{DEPS_ROOT}",
+                "LUA_DIR"                       : "$env{DEPS_ROOT}",
+                "OpenSubDiv_ROOT"               : "$env{DEPS_ROOT}",
+                "OpenVDB_ROOT"                  : "$env{DEPS_ROOT}",
+                "OPTIX_ROOT"                    : "$env{DEPS_ROOT}/optix",
+                "PXR_USD_LOCATION"              : "$env{DEPS_ROOT}",
+                "PXR_INCLUDE_DIRS"              : "$env{DEPS_ROOT}/include",
+                "Random123_ROOT"                : "$env{DEPS_ROOT}",
+                "ZLIB_ROOT"                     : "$env{DEPS_ROOT}",
+                "OIIO_PYTHON"                   : "$env{DEPS_ROOT}/lib/python3.12/dist-packages"
+            },
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}",
+                "PYTHON_EXECUTABLE": "python3",
+                "BOOST_PYTHON_COMPONENT_NAME": "python312",
+                "ABI_VERSION": "0"
+            }
+        },
+	{
+            "name": "ubuntu24-release",
+            "displayName": "Ubuntu24 Release",
+            "inherits": "ubuntu24-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_INSTALL_PREFIX": "${sourceParentDir}/../installs/openmoonray"
+            },
+            "generator": "Unix Makefiles"
+        },
         {
             "name": "rocky9-environment",
             "hidden": true,

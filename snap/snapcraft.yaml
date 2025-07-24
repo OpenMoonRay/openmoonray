@@ -1,0 +1,83 @@
+name: openmoonray
+base: core24
+adopt-info: openmoonray
+summary: openmoonray
+description: |
+  openmoonray
+
+grade: stable
+confinement: strict
+
+parts:
+  openmoonray:
+    plugin: cmake
+    source: .
+    build-packages:
+      - git
+      - git-lfs
+      - libopengl-dev
+      - libglx-dev
+      - libglvnd-dev
+      - pybind11-dev
+      - python3-dev
+      - bison
+      - flex
+      - wget
+      - libgif-dev
+      - libmng-dev
+      - libtiff-dev
+      - libjpeg-dev
+      - libatomic1
+      - libuuid1
+      - libssl-dev
+      - libcurl4-openssl-dev
+      - libfreetype-dev
+      - zlib1g-dev
+      - libcgroup-dev
+      - libblosc-dev
+      - libboost-chrono-dev
+      - libboost-date-time-dev
+      - libboost-filesystem-dev
+      - libboost-python-dev
+      - libboost-program-options-dev
+      - libboost-regex-dev
+      - libboost-thread-dev
+      - libboost-system-dev
+      - liblua5.4-dev
+      - liblog4cplus-dev
+      - libcppunit-dev
+      - libtbb-dev
+      - libopenvdb-dev
+      - python3-numpy
+      - gcc-9
+      - g++-9
+      - libsquish-dev
+      - libturbojpeg0-dev
+      - libdcmtk-dev
+      - libheif-dev
+      - libraw-dev
+      - libptexenc-dev
+      - libopencv-dev
+      - libopenjp2-7-dev
+      - qtbase5-dev
+      - libqt5opengl5-dev
+      - clang-format
+      - python3-jinja2
+      - uuid-dev
+    build-environment:
+      - CC: /usr/bin/gcc-9
+      - CXX: /usr/bin/g++-9
+      - PYTHON_VERSION: 3.12
+    override-pull: |
+      craftctl default
+      craftctl set version=$(git describe --abbrev=8 |sed -e 's/openmoonray-//g')
+    override-build: |
+      mkdir -p /opt/MoonRay/{installs,build,build-deps,source}
+      mkdir -p /opt/MoonRay/installs/{bin,lib,include}
+      cd /opt/MoonRay/build-deps
+      cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL -DNO_USD=1 $CRAFT_PART_SRC/building/Ubuntu24/
+      cmake --build . -- -j $(nproc)
+      cd $CRAFT_PART_SRC
+      cmake --preset ubuntu24-release
+      cmake --build --preset ubuntu24-release -- -j $(nproc)
+      cp -rp /opt/MoonRay/installs $CRAFT_PART_INSTALL/
