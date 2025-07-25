@@ -64,6 +64,8 @@ parts:
       - clang-format
       - python3-jinja2
       - uuid-dev
+      - libmicrohttpd-dev
+      - qtscript5-dev
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
@@ -80,4 +82,18 @@ parts:
       cd $CRAFT_PART_SRC
       cmake --preset ubuntu24-release
       cmake --build --preset ubuntu24-release -- -j $(nproc)
-      cp -rp /opt/MoonRay/installs $CRAFT_PART_INSTALL/
+      cp -rp /opt $CRAFT_PART_INSTALL/
+    prime:
+      - opt
+
+apps:
+  openmoonray:
+    command: opt/MoonRay/installs/bin/moonray_gui
+    plugs:
+      - home
+      - network
+      - audio-playback
+      - audio-record
+      - desktop
+      - x11
+      - wayland
