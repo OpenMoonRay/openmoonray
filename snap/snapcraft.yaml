@@ -66,6 +66,8 @@ parts:
       - uuid-dev
       - libmicrohttpd-dev
       - qtscript5-dev
+      - libnsl-dev
+      - nvidia-cuda-toolkit
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
