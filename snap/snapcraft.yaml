@@ -265,6 +265,9 @@ parts:
       - libzmq5
       - libzvbi0t64
       - ocl-icd-libopencl1
+      - libpython3.12t64
+      - libze1
+      - libboost-python1.83.0
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
@@ -291,7 +294,7 @@ apps:
   openmoonray:
     command: opt/MoonRay/installs/openmoonray/bin/moonray_gui
     environment:
-      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas
     plugs:
       - home
       - network
