@@ -285,6 +285,7 @@ parts:
       cp -rp /opt $CRAFT_PART_INSTALL/
     prime:
       - opt
+      - usr/lib
 
 apps:
   openmoonray:
