@@ -114,6 +114,13 @@
     ],
     "buildPresets": [
         {
+            "name": "ubuntu24-release",
+            "displayName": "Ubuntu24 Release",
+            "configurePreset": "ubuntu24-release",
+            "configuration": "Release",
+            "targets": ["install"]
+        },
+        {
             "name": "rocky9-release",
             "displayName": "Rocky9 Release",
             "configurePreset": "rocky9-release",
