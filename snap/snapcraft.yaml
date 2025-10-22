@@ -84,6 +84,7 @@ parts:
       - nvidia-cuda-toolkit
       - nvidia-cuda-dev
       - ispc
+      - execstack
     stage-packages:
       - libaec0
       - libaom3
@@ -295,6 +296,8 @@ parts:
       cp -rp /opt $CRAFT_PART_INSTALL/
       cp $CRAFT_PROJECT_DIR/snap/local/desktop-launch $CRAFT_PART_INSTALL/
       chmod a+x $CRAFT_PART_INSTALL/desktop-launch
+      execstack --clear-execstack $CRAFT_PART_INSTALL/opt/MoonRay/installs/openmoonray/bin/moonray_gui
+      execstack --clear-execstack $CRAFT_PART_INSTALL/opt/MoonRay/installs/openmoonray/lib/librendering_pbr.so
     prime:
       - desktop-launch
       - opt
