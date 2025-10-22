@@ -66,6 +66,7 @@ parts:
       - uuid-dev
       - libmicrohttpd-dev
       - qtscript5-dev
+      - libopenimageio-dev
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
