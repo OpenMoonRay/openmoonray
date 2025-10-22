@@ -51,6 +51,7 @@ parts:
       - libboost-regex-dev
       - libboost-thread-dev
       - libboost-system-dev
+      - lua5.4
       - liblua5.4-dev
       - liblog4cplus-dev
       - libcppunit-dev
