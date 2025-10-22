@@ -43,8 +43,8 @@ set(CHAIN OpenSubdiv)
 
 ExternalProject_Add(OpenEXR
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr
-    GIT_TAG 8bc3741131db146ad08a5b83af9e6e48f0e94a03 # v2.5.7
-    PATCH_COMMAND patch IlmBase/Half/CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/../Imath_include_paths.patch
+    GIT_TAG fad1d1a9dc188aceabbea1313580d73b7236b79b # v3.1.13 refplat 2023
+    #PATCH_COMMAND patch IlmBase/Half/CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/../Imath_include_paths.patch
     INSTALL_DIR ${InstallRoot}
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -93,7 +93,7 @@ set(CHAIN embree)
 
 ExternalProject_Add(OpenColorIO
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/OpenColorIO
-    GIT_TAG 056b7b0cb0d087961e9dba75104820e44faf52a1 # v2.0.2
+    GIT_TAG d1ef24cbf8021f642e42f45f50c2cd4cc77141ce # v2.2.1
     INSTALL_DIR ${InstallRoot}
     CMAKE_ARGS
         -DOCIO_BUILD_APPS=OFF
@@ -109,23 +109,19 @@ ExternalProject_Add(OpenColorIO
 )
 set(CHAIN OpenColorIO)
 
-#ExternalProject_Add(OpenImageIO
-#    URL https://github.com/AcademySoftwareFoundation/OpenImageIO/archive/refs/tags/v2.3.21.0.tar.gz
-    #GIT_REPOSITORY https://github.com/OpenImageIO/oiio
-    #GIT_TAG v2.3.21.0
-#    INSTALL_DIR ${InstallRoot}
-#    CMAKE_ARGS
-#        -DOpenEXR_ROOT=<INSTALL_DIR>
-#        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-#        -DUSE_QT=0
-#        -DUSE_PYTHON=1
-#	-DUSE_Ptex=OFF
-#	-DUSE_Nuke=OFF
-#	-DOIIO_BUILD_TESTS=0
-#	-DOIIO_BUILD_TOOLS=0
-#    DEPENDS ${CHAIN}
-#)
-#set(CHAIN OpenImageIO)
+ExternalProject_Add(OpenImageIO
+    GIT_REPOSITORY https://github.com/OpenImageIO/oiio
+    GIT_TAG f32bf6e6f8de38ab6d197a72fd72366b66fd30a3 # 2.5.19
+    INSTALL_DIR ${InstallRoot}
+    CMAKE_ARGS
+        -DOpenEXR_ROOT=<INSTALL_DIR>
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DUSE_QT=0
+        -DUSE_PYTHON=1
+        -DCMAKE_CXX_STANDARD=17 # or the dicom build fails with C++17 issues
+    DEPENDS ${CHAIN}
+)
+set(CHAIN OpenImageIO)
 
 ExternalProject_Add(OpenImageDenoise
     URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.0.1/oidn-2.0.1.src.tar.gz
