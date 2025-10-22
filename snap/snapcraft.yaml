@@ -8,6 +8,14 @@ description: |
 grade: stable
 confinement: strict
 
+package-repositories:
+  - type: apt
+    formats: [deb]
+    architectures: [amd64]
+    path: /
+    key-id: EB693B3035CD5710E231E123A4B469963BF863CC
+    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64
+
 parts:
   openmoonray:
     plugin: cmake
@@ -68,6 +76,7 @@ parts:
       - qtscript5-dev
       - libnsl-dev
       - nvidia-cuda-toolkit
+      - nvidia-cuda-dev
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
