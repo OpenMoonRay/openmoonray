@@ -78,6 +78,193 @@ parts:
       - libnsl-dev
       - nvidia-cuda-toolkit
       - nvidia-cuda-dev
+      - ispc
+    stage-packages:
+      - libaec0
+      - libaom3
+      - libarmadillo12
+      - libarpack2t64
+      - libatomic1
+      - libavcodec60
+      - libavformat60
+      - libavutil58
+      - libblas3
+      - libblosc1
+      - libbluray2
+      - libboost-filesystem1.83.0
+      - libboost-iostreams1.83.0
+      - libboost-program-options1.83.0
+      - libboost-thread1.83.0
+      - libcairo-gobject2
+      - libcairo2
+      - libcfitsio10t64
+      - libcharls2
+      - libchromaprint1
+      - libcjson1
+      - libcodec2-1.2
+      - libcppunit-1.15-0
+      - libcurl3t64-gnutls
+      - libcurl4t64
+      - libdatrie1
+      - libdav1d7
+      - libdc1394-25
+      - libdcmtk17t64
+      - libdeflate0
+      - libdouble-conversion3
+      - libdw1t64
+      - libexif12
+      - libfontconfig1
+      - libfreexl1
+      - libfribidi0
+      - libfyba0t64
+      - libgdal34t64
+      - libgdcm3.0t64
+      - libgdk-pixbuf-2.0-0
+      - libgeos-c1t64
+      - libgeos3.12.1t64
+      - libgeotiff5
+      - libgfortran5
+      - libgif7
+      - libgl1
+      - libglvnd0
+      - libglx0
+      - libgme0
+      - libgomp1
+      - libgphoto2-6t64
+      - libgphoto2-port12t64
+      - libgraphite2-3
+      - libgsm1
+      - libgstreamer-plugins-base1.0-0
+      - libgstreamer1.0-0
+      - libharfbuzz0b
+      - libhdf4-0-alt
+      - libhdf5-103-1t64
+      - libhdf5-hl-100t64
+      - libheif1
+      - libhwy1t64
+      - libicu74
+      - libimath-3-1-29t64
+      - libjbig0
+      - libjpeg-turbo8
+      - libjxl0.7
+      - libkmlbase1t64
+      - libkmldom1t64
+      - libkmlengine1t64
+      - liblapack3
+      - liblcms2-2
+      - libldap2
+      - liblerc4
+      - liblog4cplus-2.0.5t64
+      - libltdl7
+      - liblua5.4-0
+      - libmbedcrypto7t64
+      - libmd4c0
+      - libmicrohttpd12t64
+      - libminizip1t64
+      - libmp3lame0
+      - libmpg123-0t64
+      - libmysqlclient21
+      - libnetcdf19t64
+      - libnghttp2-14
+      - libnorm1t64
+      - libnspr4
+      - libnss3
+      - libnuma1
+      - libodbc2
+      - libodbcinst2
+      - libogdi4.1
+      - libogg0
+      - libopencv-core406t64
+      - libopencv-imgcodecs406t64
+      - libopencv-imgproc406t64
+      - libopencv-videoio406t64
+      - libopenexr-3-1-30
+      - libopengl0
+      - libopenjp2-7
+      - libopenmpt0t64
+      - libopenvdb10.0t64
+      - libopus0
+      - liborc-0.4-0t64
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpcre2-16-0
+      - libpgm-5.3-0t64
+      - libpixman-1-0
+      - libpoppler134
+      - libpq5
+      - libproj25
+      - libpsl5t64
+      - libqhull-r8.0
+      - libqt5core5t64
+      - libqt5gui5t64
+      - libqt5opengl5t64
+      - libqt5script5
+      - libqt5widgets5t64
+      - librabbitmq4
+      - librav1e0
+      - libraw1394-11
+      - libraw23t64
+      - librist4
+      - librsvg2-2
+      - librtmp1
+      - librttopo1
+      - libsasl2-2
+      - libsharpyuv0
+      - libshine3
+      - libsnappy1v5
+      - libsodium23
+      - libsoxr0
+      - libspatialite8t64
+      - libspeex1
+      - libsrt1.5-gnutls
+      - libssh-4
+      - libssh-gcrypt-4
+      - libsuperlu6
+      - libsvtav1enc1d1
+      - libswresample4
+      - libswscale7
+      - libsz2
+      - libtbb12
+      - libthai0
+      - libtheora0
+      - libtiff6
+      - libtwolame0
+      - libudfread0
+      - libunwind8
+      - liburiparser1
+      - libusb-1.0-0
+      - libva-drm2
+      - libva-x11-2
+      - libva2
+      - libvdpau1
+      - libvorbis0a
+      - libvorbisenc2
+      - libvorbisfile3
+      - libvpl2
+      - libvpx9
+      - libwebp7
+      - libwebpdemux2
+      - libwebpmux3
+      - libx11-6
+      - libx11-xcb1
+      - libx264-164
+      - libx265-199
+      - libxau6
+      - libxcb-dri3-0
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcb1
+      - libxdmcp6
+      - libxerces-c3.2t64
+      - libxext6
+      - libxfixes3
+      - libxml2
+      - libxrender1
+      - libxvidcore4
+      - libzmq5
+      - libzvbi0t64
+      - ocl-icd-libopencl1
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
@@ -92,15 +279,16 @@ parts:
       cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL -DNO_USD=1 $CRAFT_PART_SRC/building/Ubuntu24/
       cmake --build . -- -j $(nproc)
       cd $CRAFT_PART_SRC
-      cmake --preset ubuntu24-release -DMOONRAY_USE_OPTIX=NO
+      cmake --preset ubuntu24-release -DMOONRAY_USE_OPTIX=NO -DMOONRAY_BUILD_TESTING=NO
       cmake --build --preset ubuntu24-release -- -j $(nproc)
+      cp -rp $CRAFT_PART_SRC/../../installs/* /opt/MoonRay/installs/
       cp -rp /opt $CRAFT_PART_INSTALL/
     prime:
       - opt
 
 apps:
   openmoonray:
-    command: opt/MoonRay/installs/bin/moonray_gui
+    command: opt/MoonRay/installs/openmoonray/bin/moonray_gui
     plugs:
       - home
       - network
