@@ -3,7 +3,8 @@ base: core24
 adopt-info: openmoonray
 summary: openmoonray
 description: |
-  openmoonray
+  MoonRay is DreamWorks’ open-source, award-winning, state-of-the-art 
+  production MCRT renderer. 
 
 grade: stable
 confinement: strict
@@ -15,6 +16,10 @@ package-repositories:
     path: /
     key-id: EB693B3035CD5710E231E123A4B469963BF863CC
     url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64
+
+layout:
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
 
 parts:
   openmoonray:
@@ -268,6 +273,8 @@ parts:
       - libpython3.12t64
       - libze1
       - libboost-python1.83.0
+      - qtwayland5
+      - xkb-data
     build-environment:
       - CC: /usr/bin/gcc-9
       - CXX: /usr/bin/g++-9
@@ -286,15 +293,24 @@ parts:
       cmake --build --preset ubuntu24-release -- -j $(nproc)
       cp -rp $CRAFT_PART_SRC/../../installs/* /opt/MoonRay/installs/
       cp -rp /opt $CRAFT_PART_INSTALL/
+      cp $CRAFT_PROJECT_DIR/snap/local/desktop-launch $CRAFT_PART_INSTALL/
+      chmod a+x $CRAFT_PART_INSTALL/desktop-launch
     prime:
+      - desktop-launch
       - opt
       - usr/lib
+      - usr/share/X11
+      - -opt/MoonRay/build-deps
+      - -opt/MoonRay/installs/include
+      - -opt/MoonRay/installs/openmoonray/include
+      - -opt/MoonRay/installs/lib/cmake
+      - -opt/MoonRay/installs/openmoonray/lib/cmake
 
 apps:
-  openmoonray:
-    command: opt/MoonRay/installs/openmoonray/bin/moonray_gui
+  moonray:
+    command: opt/MoonRay/installs/openmoonray/bin/moonray -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
     environment:
-      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
     plugs:
       - home
       - network
@@ -303,3 +319,20 @@ apps:
       - desktop
       - x11
       - wayland
+      - hardware-observe
+      - opengl
+  gui:
+    command: opt/MoonRay/installs/openmoonray/bin/moonray_gui -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
+    command-chain: [ desktop-launch ]
+    environment:
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - audio-playback
+      - audio-record
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
