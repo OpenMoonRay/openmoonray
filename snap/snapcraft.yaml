@@ -88,7 +88,7 @@ parts:
       mkdir -p /opt/MoonRay/{installs,build,build-deps,source}
       mkdir -p /opt/MoonRay/installs/{bin,lib,include}
       cd /opt/MoonRay/build-deps
-      cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL -DNO_USD=1 $CRAFT_PART_SRC/building/Ubuntu24/
+      cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL -DNO_USD=1 -DMOONRAY_USE_OPTIX=NO $CRAFT_PART_SRC/building/Ubuntu24/
       cmake --build . -- -j $(nproc)
       cd $CRAFT_PART_SRC
       cmake --preset ubuntu24-release
