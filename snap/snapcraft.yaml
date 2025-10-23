@@ -1,10 +1,16 @@
 name: openmoonray
 base: core24
 adopt-info: openmoonray
-summary: openmoonray
+title: MoonRay
+summary: MoonRay is DreamWorks’ open-source production MCRT renderer
 description: |
   MoonRay is DreamWorks’ open-source, award-winning, state-of-the-art 
-  production MCRT renderer. 
+  production MCRT renderer.
+license: Apache-2.0
+source-code: https://github.com/dreamworksanimation/openmoonray
+contact: https://github.com/dreamworksanimation/openmoonray/issues
+issues: https://github.com/dreamworksanimation/openmoonray/issues
+website: https://openmoonray.org/
 
 grade: stable
 confinement: strict
