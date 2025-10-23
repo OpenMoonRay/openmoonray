@@ -317,8 +317,6 @@ apps:
     plugs:
       - home
       - network
-      - audio-playback
-      - audio-record
       - desktop
       - x11
       - wayland
@@ -332,8 +330,6 @@ apps:
     plugs:
       - home
       - network
-      - audio-playback
-      - audio-record
       - desktop
       - x11
       - wayland
