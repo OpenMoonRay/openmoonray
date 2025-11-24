@@ -13,7 +13,7 @@ endif()
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/moonray_tools)
     add_subdirectory(moonray_tools)
 endif()
-add_subdirectory(moonshine_usd)
+#add_subdirectory(moonshine_usd)
 add_subdirectory(render_profile_viewer)
 add_subdirectory(scene_rdl2)
 

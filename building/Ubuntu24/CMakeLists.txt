@@ -43,8 +43,7 @@ set(CHAIN OpenSubdiv)
 
 ExternalProject_Add(OpenEXR
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr
-    GIT_TAG fad1d1a9dc188aceabbea1313580d73b7236b79b # v3.1.13 refplat 2023
-    #PATCH_COMMAND patch IlmBase/Half/CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/../Imath_include_paths.patch
+    GIT_TAG 68d9e1e17620cef00e59b43fa42c97fbcf90e72b # v3.1.8
     INSTALL_DIR ${InstallRoot}
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -55,7 +54,7 @@ set(CHAIN OpenEXR)
 
 ExternalProject_Add(Random123
     GIT_REPOSITORY https://github.com/DEShawResearch/random123
-    GIT_TAG 726a093cd9a73f3ec3c8d7a70ff10ed8efec8d13 # v1.14.0
+    GIT_TAG 726a093cd9a73f3ec3c8d7a70ff10ed8efec8d13 # v1.14.0 (internally we use 1.08.3)
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -65,7 +64,7 @@ ExternalProject_Add(Random123
 set(CHAIN Random123)
 
 ExternalProject_Add(ISPC
-    URL https://github.com/ispc/ispc/releases/download/v1.20.0/ispc-v1.20.0-linux.tar.gz
+    URL https://github.com/ispc/ispc/releases/download/v1.21.0/ispc-v1.21.0-linux.tar.gz
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -123,19 +122,6 @@ ExternalProject_Add(OpenImageIO
 )
 set(CHAIN OpenImageIO)
 
-ExternalProject_Add(OpenImageDenoise
-    URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.0.1/oidn-2.0.1.src.tar.gz
-    INSTALL_DIR ${InstallRoot}
-    CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DISPC_EXECUTABLE=<INSTALL_DIR>/bin/ispc
-        -DTBB_ROOT=<INSTALL_DIR>
-        -DOIDN_APPS=OFF
-    DEPENDS ${CHAIN}
-)
-set(CHAIN OpenImageDenoise)
-
-# NEW, make sure this isn't before OIIO or it breaks OIIO
 ExternalProject_Add(TBB
     URL https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2020.3.3.tar.gz
     BUILD_IN_SOURCE 1
@@ -147,10 +133,22 @@ ExternalProject_Add(TBB
 )
 set(CHAIN TBB)
 
+ExternalProject_Add(OpenImageDenoise
+    URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.3.3/oidn-2.3.3.src.tar.gz
+    INSTALL_DIR ${InstallRoot}
+    CMAKE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DISPC_EXECUTABLE=<INSTALL_DIR>/bin/ispc
+        -DTBB_ROOT=<INSTALL_DIR>
+        -DOIDN_APPS=OFF
+    DEPENDS ${CHAIN}
+)
+set(CHAIN OpenImageDenoise)
+
 if(NOT NO_USD)
     ExternalProject_Add(USD
         GIT_REPOSITORY https://github.com/PixarAnimationStudios/USD
-        GIT_TAG 0c7b9a95f155c221ff7df9270a39a52e3b23af8b # v22.11
+        GIT_TAG 10b62439e9242a55101cf8b200f2c7e02420e1b0 # v23.08
         INSTALL_DIR ${InstallRoot}
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

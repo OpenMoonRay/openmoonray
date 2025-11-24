@@ -45,7 +45,7 @@ parts:
       - libgif-dev
       - libmng-dev
       - libtiff-dev
-      - libjpeg-dev
+      - libjpeg-turbo8-dev
       - libatomic1
       - libuuid1
       - libssl-dev
