@@ -157,6 +157,18 @@ ExternalProject_Add(TBB
 )
 set(CHAIN TBB)
 
+ExternalProject_Add(OpenImageDenoise
+    URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.3.3/oidn-2.3.3.src.tar.gz
+    INSTALL_DIR ${InstallRoot}
+    CMAKE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DISPC_EXECUTABLE=<INSTALL_DIR>/bin/ispc
+        -DTBB_ROOT=<INSTALL_DIR>
+        -DOIDN_APPS=OFF
+    DEPENDS ${CHAIN}
+)
+set(CHAIN OpenImageDenoise)
+
 if(NOT NO_USD)
     ExternalProject_Add(USD
         GIT_REPOSITORY https://github.com/PixarAnimationStudios/USD
