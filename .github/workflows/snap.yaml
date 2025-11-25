@@ -11,6 +11,9 @@ jobs:
   build-amd64:
     runs-on: ubuntu-24.04
     steps:
+    - uses: jlumbroso/free-disk-space@3e0187054f9c4bc1f55a743792872df36b2d88e0
+      with:
+        tool-cache: true
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
