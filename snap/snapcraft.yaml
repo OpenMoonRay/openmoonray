@@ -288,7 +288,12 @@ parts:
       - PYTHON_VERSION: 3.12
     override-pull: |
       craftctl default
-      craftctl set version=$(git describe --abbrev=8 |sed -e 's/openmoonray-//g')
+      VERSION=$(git describe --abbrev=8 2>/dev/null | sed -e 's/openmoonray-//g')
+      if [ -z "$VERSION" ]; then
+          VERSION=$(grep '^\s*_version' package.py | awk -F "'" '{print $2}')
+      fi
+      echo $VERSION
+      craftctl set version=$(echo $VERSION)
     override-build: |
       mkdir -p /opt/MoonRay/{installs,build,build-deps,source}
       mkdir -p /opt/MoonRay/installs/{bin,lib,include}
