@@ -1,0 +1,19 @@
+name: Snap
+
+on:
+  push:
+    branches: [ubuntu24]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+        submodules: recursive
+    - uses: snapcore/action-build@v1
