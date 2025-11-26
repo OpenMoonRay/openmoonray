@@ -20,3 +20,8 @@ jobs:
         fetch-tags: true
         submodules: "recursive"
     - uses: snapcore/action-build@v1
+    - uses: actions/upload-artifact@v4
+      with:
+        name: snap
+        path: ${{ github.workspace }}/*.snap
+        retention-days: 5
