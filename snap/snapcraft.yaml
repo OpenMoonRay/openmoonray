@@ -14,6 +14,8 @@ website: https://openmoonray.org/
 
 grade: stable
 confinement: strict
+platforms:
+  amd64:
 
 package-repositories:
   - type: apt
