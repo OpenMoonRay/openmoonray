@@ -297,7 +297,7 @@ parts:
       mkdir -p /opt/MoonRay/{installs,build,build-deps,source}
       mkdir -p /opt/MoonRay/installs/{bin,lib,include}
       cd /opt/MoonRay/build-deps
-      cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL -DNO_USD=1 $CRAFT_PART_SRC/building/Ubuntu24/
+      cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL $CRAFT_PART_SRC/building/Ubuntu24/
       cmake --build . -- -j $(nproc)
       cd $CRAFT_PART_SRC
       cmake --preset ubuntu24-release -DMOONRAY_USE_OPTIX=NO -DMOONRAY_BUILD_TESTING=NO
@@ -337,6 +337,41 @@ apps:
     command-chain: [ desktop-launch ]
     environment:
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  hd-render:
+    command: opt/MoonRay/installs/openmoonray/bin/hd_render
+    command-chain: [ desktop-launch ]
+    environment:
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+      PYTHONPATH: $SNAP/opt/MoonRay/installs/lib/python:$SNAP/opt/MoonRay/installs/lib/python3.12/site-packages
+      PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
+      ARRAS_SESSION_PATH: $SNAP/opt/MoonRay/installs/openmoonray/sessions
+      RDL2_DSO_PATH: $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  hd-usd2rdl:
+    command: opt/MoonRay/installs/openmoonray/bin/hd_usd2rdl
+    command-chain: [ desktop-launch ]
+    environment:
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+      PYTHONPATH: $SNAP/opt/MoonRay/installs/lib/python:$SNAP/opt/MoonRay/installs/lib/python3.12/site-packages
+      PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
+      ARRAS_SESSION_PATH: $SNAP/opt/MoonRay/installs/openmoonray/sessions
+      RDL2_DSO_PATH: $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
     plugs:
       - home
       - network

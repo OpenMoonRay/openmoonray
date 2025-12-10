@@ -162,7 +162,7 @@ if(NOT NO_USD)
             -DTBB_USE_DEBUG_BUILD=OFF
             -DTBB_ROOT_DIR=/usr
             -DTBB_LIBRARIES=/usr/lib/x86_64-linux-gnu
-            -DTBB_INCLUDE_DIRS=/usr/include ..
+            -DTBB_INCLUDE_DIRS=${InstallRoot}/include ..
             -DPXR_BUILD_TESTS=OFF
             -DPXR_BUILD_EXAMPLES=OFF
             -DPXR_BUILD_TUTORIALS=OFF
