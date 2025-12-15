@@ -354,7 +354,6 @@ apps:
       PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
       ARRAS_SESSION_PATH: $SNAP/opt/MoonRay/installs/openmoonray/sessions
       RDL2_DSO_PATH: $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
-
     plugs:
       - home
       - network

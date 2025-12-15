@@ -638,4 +638,7 @@ if [ -n "$SNAP_DESKTOP_DEBUG" ]; then
   echo "Now running: exec $@"
 fi
 
+$SNAP/opt/MoonRay/installs/openmoonray/bin/rdl2_json_exporter --out $SNAP_USER_COMMON/shader_json/ --sparse
+export MOONRAY_CLASS_PATH=$SNAP_USER_COMMON/shader_json
+
 exec "$@"
