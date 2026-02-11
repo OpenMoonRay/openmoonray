@@ -178,3 +178,31 @@ if(NOT NO_USD)
     set(CHAIN USD)
 endif()
 
+ExternalProject_Add(GLFW
+    GIT_REPOSITORY https://github.com/glfw/glfw
+    GIT_TAG 3.4
+    BUILD_COMMAND make ${JOBS_ARG}
+    CMAKE_ARGS
+        -DCMAKE_PREFIX_PATH:PATH=${InstallRoot}
+        -DCMAKE_INSTALL_PREFIX:PATH=${InstallRoot}
+        -DGLFW_BUILD_EXAMPLES=OFF
+        -DGLFW_BUILD_TESTS=OFF
+        -DGLFW_BUILD_DOCS=OFF
+        -DGLFW_INSTALL=ON
+        -DBUILD_SHARED_LIBS=ON
+    DEPENDS ${CHAIN}
+)
+set(CHAIN GLFW)
+
+ExternalProject_Add(OptiXHeaders
+    GIT_REPOSITORY https://github.com/NVIDIA/optix-dev
+    GIT_TAG v7.6.0
+    INSTALL_DIR ${InstallRoot}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+        <SOURCE_DIR>/include
+        <INSTALL_DIR>/include
+    DEPENDS ${CHAIN}
+)
+set(CHAIN OptiXHeaders)

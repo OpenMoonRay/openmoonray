@@ -93,6 +93,12 @@ parts:
       - nvidia-cuda-dev
       - ispc
       - execstack
+      - libwayland-dev # Needed for GLFW
+      - libxkbcommon-dev # Needed for GLFW
+      - libxrandr-dev # Needed for GLFW
+      - libxinerama-dev # Needed for GLFW
+      - libxcursor-dev # Needed for GLFW
+      - libxi-dev # Needed for GLFW
     stage-packages:
       - libaec0
       - libaom3
@@ -334,6 +340,19 @@ apps:
       - opengl
   gui:
     command: opt/MoonRay/installs/openmoonray/bin/moonray_gui -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
+    command-chain: [ desktop-launch ]
+    environment:
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  gui-v2:
+    command: opt/MoonRay/installs/openmoonray/bin/moonray_gui_v2 -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
     command-chain: [ desktop-launch ]
     environment:
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
