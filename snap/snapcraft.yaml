@@ -199,6 +199,7 @@ parts:
       - libopencv-imgproc406t64
       - libopencv-videoio406t64
       - libopenexr-3-1-30
+      - libegl1
       - libopengl0
       - libopenjp2-7
       - libopenmpt0t64
@@ -319,6 +320,8 @@ parts:
       - opt
       - usr/lib
       - usr/share/X11
+      - usr/share/glvnd
+      - etc/glvnd
       - -opt/MoonRay/build-deps
       - -opt/MoonRay/installs/include
       - -opt/MoonRay/installs/openmoonray/include
