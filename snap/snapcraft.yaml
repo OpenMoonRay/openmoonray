@@ -329,6 +329,7 @@ apps:
   moonray:
     command: opt/MoonRay/installs/openmoonray/bin/moonray -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
     environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
     plugs:
       - home
@@ -342,6 +343,7 @@ apps:
     command: opt/MoonRay/installs/openmoonray/bin/moonray_gui -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
     command-chain: [ desktop-launch ]
     environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
     plugs:
       - home
@@ -355,6 +357,7 @@ apps:
     command: opt/MoonRay/installs/openmoonray/bin/moonray_gui_v2 -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
     command-chain: [ desktop-launch ]
     environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
     plugs:
       - home
@@ -368,6 +371,7 @@ apps:
     command: opt/MoonRay/installs/openmoonray/bin/hd_render
     command-chain: [ desktop-launch ]
     environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
       PYTHONPATH: $SNAP/opt/MoonRay/installs/lib/python:$SNAP/opt/MoonRay/installs/lib/python3.12/site-packages
       PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
@@ -385,6 +389,7 @@ apps:
     command: opt/MoonRay/installs/openmoonray/bin/hd_usd2rdl
     command-chain: [ desktop-launch ]
     environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
       LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
       PYTHONPATH: $SNAP/opt/MoonRay/installs/lib/python:$SNAP/opt/MoonRay/installs/lib/python3.12/site-packages
       PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
