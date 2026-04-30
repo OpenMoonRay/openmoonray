@@ -18,10 +18,46 @@ MoonRay is licensed under the [Apache 2.0 license](LICENSE). Contributions to th
 
 ### Contributor License Agreement (CLA)
 
-To contribute to MoonRay, you must sign a Contributor License Agreement (CLA).
+Developers who wish to contribute code to be considered for inclusion
+in the MoonRay project must first complete a **Contributor
+License Agreement**.
 
-* If you are an individual writing the code on your own time and you're sure you are the sole owner of any intellectual property you contribute, you can sign the [ICLA as an Individual Contributor](https://github.com/dreamworksanimation/openmoonray/blob/main/tsc/icla.md).
-* If you are writing the code as part of your job, or if your employer retains ownership to intellectual property you create, then your company's legal affairs representatives should sign a [Corporate Contributor License Agreement](https://github.com/dreamworksanimation/openmoonray/blob/main/tsc/ccla.md). If your company already has a signed CCLA on file, ask your local CLA manager to add you to your company's approved contributor list.
+To contribute to MoonRay, you must sign a CLA through the
+[EasyCLA](https://docs.linuxfoundation.org/lfx/easycla)
+system, which is integrated with GitHub as a pull request check.
+
+If a contributor opens a pull request without having a CLA on file, the 
+contributor will be guided through the process to have the appropriate 
+CLA signed. Look in the PR comments for the "linux-foundation-easycla" 
+check that would fail, and a red "NOT COVERED" button will appear in the PR
+comments; click the link in the comment to sign the CLA. For organizations, 
+you can alternatively go to [this
+link](https://organization.lfx.linuxfoundation.org/foundation/a09410000182dD2AAI/project/a092M00001If9ujQAB/cla)
+prior to submitting a pull request, which will guide you through the 
+process to have a CLA signed on behalf of the organization.
+
+* If you are an individual writing the code on your own time and
+  you're **sure** you are the sole owner of any intellectual property you
+  contribute, you can sign the CLA as an **Individual Contributor**. If you
+  are unsure, please contact your employer for clarity.
+
+* If you are writing the code as part of your job, or if your employer
+  retains ownership to intellectual property you create, no matter how
+  small, then your company's legal affairs representatives should sign
+  a **Corporate Contributor Licence Agreement**. If your company already
+  has a signed CCLA on file, ask your local CLA manager to add you
+  (via your GitHub account name/email address) to your company's
+  "approved" list.
+
+The downloadable PDF's on the EasyCLA page are provided for reference
+only. To execute the signature, sign the form online through the
+relevant links.
+
+The MoonRay CLAs are the standard forms used by the Linux Foundation
+projects and [recommended by the ASWF
+TAC](https://github.com/AcademySoftwareFoundation/tac/blob/main/process/contributing.md#contributor-license-agreement-cla). 
+Note that if you have signed a CLA for a different ASWF or LF project, that 
+CLA doesn't apply here and you need to sign for this project specifically.
 
 ### Developer Certificate of Origin (DCO)
 
