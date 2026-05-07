@@ -67,12 +67,12 @@ The TSC elects a Chair person, who acts as the project manager, organizing meeti
 Current voting members of the TSC are:
 
 * **Chair**: Jon Lanz - DreamWorks Animation
-* Jeff Mahovsky - DreamWorks Animation
 * Matthew Low - DreamWorks Animation
 * Paul Ramsey - DreamWorks Animation
 * Randy Packer - DreamWorks Animation
 * Rob Wilson - DreamWorks Animation
 * Toshi Kato - DreamWorks Animation
+* Michel Castejon
 
 ### TSC Nomination and Succession
 
