@@ -26,15 +26,14 @@ prepend_unique_path() {
     esac
 }
 
-# Preserve any existing USD plugin search path (set by Houdini or shell packages),
-# while guaranteeing Moonray plugin location is present first.
+# Preserve any existing USD plugin search path while guaranteeing MoonRay plugin location is present.
 export PXR_PLUGINPATH_NAME="$(prepend_unique_path "${omr_install_dir}/plugin/pxr" "${PXR_PLUGINPATH_NAME}")"
 export PXR_PLUGIN_PATH="$(prepend_unique_path "${omr_install_dir}/plugin/pxr" "${PXR_PLUGIN_PATH}")"
 export PXR_PLUGINPATH_NAME="${PXR_PLUGINPATH_NAME%:}"
 export PXR_PLUGIN_PATH="${PXR_PLUGIN_PATH%:}"
 
-# Prefer layering Moonray onto an existing Houdini env (from houdini_setup). If that
-# was not sourced yet, fall back to the known Houdini 21.0.671 resources path.
+# Prefer layering MoonRay onto an existing Houdini env (from houdini_setup).
+# If that wasn't sourced yet, fall back to the known Houdini 21.0.671 resources path.
 if [ -n "${HOUDINI_PATH}" ]; then
     export HOUDINI_PATH="$(prepend_unique_path "${omr_install_dir}/plugin/houdini" "${HOUDINI_PATH}")"
     export HOUDINI_PATH="$(prepend_unique_path "${omr_install_dir}/houdini" "${HOUDINI_PATH}")"

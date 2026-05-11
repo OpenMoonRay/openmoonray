@@ -42,7 +42,8 @@
             },
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT};$env{PREFIX_PXR}",
-                "MOONRAY_USE_HOUDINI": "TRUE"
+                "MOONRAY_USE_HOUDINI": "TRUE",
+                "BOOST_PYTHON_COMPONENT_NAME": "python311"
             }
         },
         {

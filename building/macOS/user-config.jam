@@ -1,6 +1,6 @@
-using python : 3.9
+using python : 3.11
   : "/usr/bin/python3"
-  : "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Headers"
-  : "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib"
+  : "/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/include/python3.11"
+  : "/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/lib"
   ;
 using clang : : : <compileflags>-"arch arm64" <linkflags>"-arch arm64" ;
