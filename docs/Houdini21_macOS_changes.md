@@ -100,3 +100,6 @@ Important: in this tested setup, using `libhboost_python311-mt-a64.dylib` did no
   - [`Moonray-Houdini21-macOS`](https://github.com/rolledhand/openmoonray/tree/Moonray-Houdini21-macOS)
 - Submodule repo branch:
   - [`boost-1.82-macro-update`](https://github.com/rolledhand/cmake_modules/tree/boost-1.82-macro-update)
+- hdMoonray int64 conversion fix (Houdini 21.0.671 runtime):
+  - target branch: `houdini21-int64-fix`
+  - branch link: `https://github.com/rolledhand/hdMoonray/tree/houdini21-int64-fix`

@@ -34,7 +34,7 @@
             "inherits": "macos-environment",
             "environment": {
                 "PREFIX_PXR"                : "${sourceParentDir}/building/macOS/pxr-houdini",
-                "HOUDINI_INSTALL_DIR"       : "/Applications/Houdini/Houdini21.0.680",
+                "HOUDINI_INSTALL_DIR"       : "/Applications/Houdini/Houdini21.0.671",
                 "PXR_LIB_PREFIX"            : "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries",
                 "PXR_INCLUDE_PREFIX"        : "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/include",
                 "PXR_DEPS_PREFIX"           : "$env{DEPS_ROOT}",
