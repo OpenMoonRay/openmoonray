@@ -1,105 +1,78 @@
-# OpenMoonRay Houdini 21.0.680 macOS Compatibility Notes
+# Houdini 21 macOS Compatibility Changes
 
-This document records the MoonRay macOS updates required for Houdini `21.0.680`.
+## Summary
+Adds macOS/Houdini 21 compatibility updates required to build and install OpenMoonRay against Houdini 21 using Houdini-provided USD/PXR and Python 3.11. This includes Boost 1.82 alignment, dependency fetch/build fixes, Houdini USD library naming compatibility, and source-driven Houdini plugin payload installation. This branch validates build/install/selectability in Solaris, but does not resolve native DWA material authoring/render behavior in Houdini 21.
 
-## Scope
-
-- Target platform: macOS
-- Target DCC: Houdini `21.0.680`
-- Goal: build MoonRay against Houdini-owned USD/PXR and Python 3.11
+Compatibility and integration improved in this branch. Native DWA authoring/runtime behavior in Solaris remains unresolved.
 
 ## Tested Environment
+- macOS Tahoe
+- Xcode 26.0.1 class toolchain flow
+- Houdini 21 series validation target:
+- `21.0.680` (original PR target)
+- `21.0.671` (current local validation path)
 
-- macOS: Tahoe (SDK observed during build: `MacOSX26.4.sdk`)
-- Xcode: `26.0.1` (`/Applications/Xcode_26.0.1.app`)
-- Houdini validated in this branch: `21.0.680`
+## Build/Dependency Changes
+- Boost dependency alignment moved to `1.82.0`.
+- Boost patch command made tolerant of already-applied state (`patch ... || true`).
+- `log4cplus` dependency fetch moved from git tag checkout to release tarball:
+- `https://github.com/log4cplus/log4cplus/releases/download/REL_2_0_5/log4cplus-2.0.5.tar.xz`
+- `log4cplus` reproducible build workaround added before configure:
+- `touch Makefile.in`
+- `touch aclocal.m4 configure config.h.in`
 
-## Why These Changes Were Needed
+These are build reproducibility fixes, not renderer/material behavior fixes.
 
-Houdini 21 moved to Python 3.11 and ships USD/PXR libraries inside the Houdini framework layout. MoonRay must consume those paths directly for include/library resolution and avoid building a separate local USD for the Houdini build path.
+## Python 3.11 Alignment
+- Houdini 21 Python 3.11 include/lib/executable alignment was applied for USD/PXR integration in this branch.
+- `building/macOS/user-config.jam` was moved from Python 3.9 config to Python 3.11 config for this compatibility track.
+- Current pathing is validated for local Houdini 21 installs and should be parameterized before upstream hardening.
 
-## Required Compatibility Changes
+## Houdini USD/PXR Pathing
+- Houdini USD integration uses Houdini-provided PXR paths and library resolution.
+- Compatibility mapping included:
+- `libpxr_usdRiImaging.dylib` -> `libpxr_usdRiPxrImaging.dylib`
+- PXR metadata compatibility updates for Houdini 21 USD packaging were applied in `pxr-houdini` CMake metadata.
 
-### 1) [`CMakeMacOSPresets.json`](../CMakeMacOSPresets.json)
+## Install Payload Changes
+Source-driven install path includes Houdini plugin payload required for this branch validation:
+- `otls`
+- `soho`
+- `python3.11libs`
+- `toolbar` (where present in plugin payload layout)
+- integration files under Houdini plugin tree
 
-- `HOUDINI_INSTALL_DIR` set to:
-  - `/Applications/Houdini/Houdini21.0.680`
-- `PXR_LIB_PREFIX` set to:
-  - `$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries`
-- `PXR_INCLUDE_PREFIX` set to:
-  - `$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/include`
-- `PXR_BOOST_PYTHON_LIB` set to:
-  - `$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries/libpxr_python.dylib`
+Manual post-install copying is not the intended validation path for this branch.
 
-Important: in this tested setup, using `libhboost_python311-mt-a64.dylib` did not resolve all expected `pxr_boost::python` references during link, while `libpxr_python.dylib` did.
+## Validation Results
+- Dependency build: pass
+- Main configure/build: pass
+- Install: pass
+- MoonRay renderer selectable in Solaris viewport: pass
 
-### 2) [`scripts/macOS/setupHoudini.sh`](../scripts/macOS/setupHoudini.sh)
+## DWA Material Test Status
+Status: unresolved in current build.
 
-- `HOUDINI_PATH` updated to Houdini 21.0.680 framework resources path.
+Observed behavior in Solaris Material Library / mtlx subnet:
+- Native DWA nodes are visible/creatable, but do not reliably drive visible render changes in the simple test.
+- Control path through `mtlxstandard_surface` can influence render, but this is not a native DWA workflow fix.
 
-### 3) [`building/macOS/pxr-houdini/pxrTargets.cmake`](../building/macOS/pxr-houdini/pxrTargets.cmake)
+Observed runtime/disconnect signal during simple DWA tests:
+- `{dispatcherExit} Message Dispatcher [libcomputation_progmcrt.dylib] : exiting : reason is 'socket was disconnected'`
+- `{clientSocketError} SocketPeer::receive: Bad file descriptor`
+- `signal ... 15`
 
-- `HPYTHONLIB` updated to:
-  - `$ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib`
-- `HPYTHONINC` updated to:
-  - `$ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.11/include/python3.11`
+## Known Unresolved Issues
+- Native DWA material authoring/render influence in Solaris remains unresolved for this branch.
+- Some light parameter edits (for example `spread`) require manual IPR refresh and do not always live-update automatically.
+- Dome light textured workflow is currently not working in this tested branch state.
 
-### 4) [`building/macOS/pxr-houdini/pxrConfig.cmake`](../building/macOS/pxr-houdini/pxrConfig.cmake)
+## Notes For Reviewers
+- This branch should be reviewed as a Houdini 21 macOS build/install compatibility update.
+- Do not treat native DWA node visibility/selectability as evidence that native DWA material workflow is fixed.
+- No claim is made that MaterialX/native DWA Solaris authoring is production-ready in this branch.
 
-- PXR version metadata updated to:
-  - `PXR_MAJOR_VERSION "0"`
-  - `PXR_MINOR_VERSION "25"`
-  - `PXR_PATCH_VERSION "5"`
-  - `PXR_VERSION "2505"`
-
-### 5) [`building/macOS/CMakeLists.txt`](../building/macOS/CMakeLists.txt)
-
-- Boost source updated to `1.82.0` (`boost_1_82_0.tar.gz`) for Houdini 21 toolchain compatibility.
-
-### 6) [`building/macOS/pxr-houdini/pxrTargets-release.cmake`](../building/macOS/pxr-houdini/pxrTargets-release.cmake)
-
-- Houdini 21 library naming compatibility fix:
-  - `libpxr_usdRiImaging.dylib` -> `libpxr_usdRiPxrImaging.dylib`
-
-## Build Procedure Requirements (Houdini Path)
-
-- Build dependencies with Houdini USD mode enabled (skip local USD):
-  - `cmake -DNO_USD=1 ../building/macOS`
-  - `cmake --build .`
-- If dependencies were previously built without `-DNO_USD=1`, clean `build-deps/` and `installs/` before rebuilding to avoid mixed USD linkage.
-
-## Environment-Specific Workarounds
-
-- In this macOS/Xcode environment, full `cmake --build --preset macos-houdini-release` required disabling Xcode code-signing attributes at configure time to avoid dynamic-library signing failures.
-- This is an environment workaround, not a Houdini 21 compatibility requirement.
-
-## Validation Summary
-
-- Dependency build completed successfully with `-DNO_USD=1`.
-- Main project configure/build completed successfully for Houdini preset.
-- Install completed successfully.
-- Moonray appears as a selectable renderer in the Solaris viewport.
-- Houdini Solaris workflow is the intended runtime verification path.
-- `moonray_gui` command-line test requires an active GUI display session; headless runs fail with `Cannot create window: no screens available`.
-
-## Houdini Sanity Reference
-
-- SideFX changelog reference (used as a sanity baseline when evaluating Houdini compatibility context):
-  - [SideFX changelog](https://www.sidefx.com/changelog/?categories=52&journal=17.5&show_versions=on)
-- Note: this branch has not been tested against production Houdini `21.0.679`; validated test target remains Houdini `21.0.680`.
-- Additional context: the Xcode compilation issue language in SideFX notes is generic; direct relevance to MoonRay-specific build/runtime behavior is currently uncertain.
-
-## Out of Scope
-
-- Any separate Houdini shader/HDA UX issues are not addressed by these changes.
-- `cmake_modules` contains a local Boost macro adjustment: `cmake/MoonrayDso.cmake` updates `DWA_BOOST_VERSION` from `1073000` to `1082000`. This change is in the submodule working tree and is not part of the parent-repo commits in this branch.
-
-## Cross-Repo Linkage
-
-- Parent repo branch:
-  - [`Moonray-Houdini21-macOS`](https://github.com/rolledhand/openmoonray/tree/Moonray-Houdini21-macOS)
-- Submodule repo branch:
-  - [`boost-1.82-macro-update`](https://github.com/rolledhand/cmake_modules/tree/boost-1.82-macro-update)
-- hdMoonray int64 conversion fix (Houdini 21.0.671 runtime):
-  - target branch: `houdini21-int64-fix`
-  - branch link: `https://github.com/rolledhand/hdMoonray/tree/houdini21-int64-fix`
+## Future Cleanup / Upstreaming Notes
+- Parameterize local Houdini/Python paths before upstream merge hardening.
+- Keep compatibility/build fixes separated from shader authoring/runtime behavior work.
+- Track native DWA Solaris authoring/runtime closure as a follow-up effort.
