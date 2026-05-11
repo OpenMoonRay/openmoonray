@@ -11,4 +11,4 @@ export MOONRAY_CLASS_PATH=${omr_install_dir}/shader_json
 export ARRAS_SESSION_PATH=${omr_install_dir}/sessions
 PXR_PLUGINPATH_NAME=${omr_install_dir}/plugin/pxr
 #export HOUDINI_DSO_ERROR=5
-export HOUDINI_PATH=/Applications/Houdini/Houdini20.0.751/Frameworks/Houdini.framework/Versions/Current/Resources/houdini:${omr_install_dir}/houdini/:${omr_install_dir}/plugin/houdini
+export HOUDINI_PATH=/Applications/Houdini/Houdini21.0.680/Frameworks/Houdini.framework/Versions/Current/Resources/houdini:${omr_install_dir}/houdini/:${omr_install_dir}/plugin/houdini

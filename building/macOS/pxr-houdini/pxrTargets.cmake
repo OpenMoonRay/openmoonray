@@ -3,7 +3,7 @@
 # Modified to use the version of USD with headers in $env{PXR_INCLUDE_PREFIX}
 # and libs in $env{PXR_LIB_PREFIX}, with dependencies installed to $env{PXR_DEPS_PREFIX}
 # $env{PXR_BOOST_PYTHON_LIB} must be set to the location of the boost_python so used by USD
-# (Houdini names it libhboost_python39...)
+# (Houdini names it libhboost_python311...)
 
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.6)
    message(FATAL_ERROR "CMake >= 2.6.0 required")
@@ -17,8 +17,8 @@ cmake_policy(VERSION 2.6...3.21)
 # Commands may need to know the format version.
 set(CMAKE_IMPORT_FILE_VERSION 1)
 
-SET(HPYTHONLIB $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.9/lib/libpython3.9.dylib)
-SET(HPYTHONINC $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.9/include/python3.9)
+SET(HPYTHONLIB $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib)
+SET(HPYTHONINC $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.11/include/python3.11)
 
 # Protect against multiple inclusion, which would fail when already imported targets are added once more.
 set(_targetsDefined)

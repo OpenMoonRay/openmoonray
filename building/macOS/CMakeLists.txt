@@ -39,7 +39,7 @@ ExternalProject_Add(Blosc
 set(CHAIN Blosc)
 
 ExternalProject_Add(Boost
-    URL https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.gz
+    URL https://sourceforge.net/projects/boost/files/boost/1.82.0/boost_1_82_0.tar.gz
     UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot}  --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
     CONFIGURE_COMMAND ""
     PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch 
@@ -421,4 +421,3 @@ ExternalProject_Add(GLFW
     DEPENDS ${CHAIN}
 )
 set(CHAIN GLFW)
-
