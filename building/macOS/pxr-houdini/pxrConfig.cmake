@@ -17,9 +17,9 @@
 get_filename_component(PXR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(PXR_MAJOR_VERSION "0")
-set(PXR_MINOR_VERSION "22")
+set(PXR_MINOR_VERSION "25")
 set(PXR_PATCH_VERSION "5")
-set(PXR_VERSION "2205")
+set(PXR_VERSION "2505")
 
 include("${PXR_CMAKE_DIR}/pxrTargets.cmake")
 set(libs "arch;tf;gf;js;trace;work;plug;vt;ar;kind;sdf;ndr;sdr;pcp;usd;usdGeom;usdVol;usdMedia;usdShade;usdLux;usdRender;usdHydra;usdRi;usdSkel;usdUI;usdUtils;usdPhysics;garch;hf;hio;cameraUtil;pxOsd;glf;hgi;hgiGL;hgiInterop;hd;hdSt;hdx;usdImaging;usdImagingGL;usdRiImaging;usdSkelImaging;usdVolImaging;usdAppUtils;usdviewq")

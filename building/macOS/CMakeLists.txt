@@ -23,7 +23,7 @@ set(THIS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # User configurable settings
 set(InstallRoot ${rootSrcDir}/../../../../installs CACHE FILEPATH "Install root for dependencies")
-set(PythonVer 3.9.6 CACHE STRING "Python version (n.m), e.g. 3.6")
+set(PythonVer 3.11 CACHE STRING "Python version (n.m), e.g. 3.6")
 set(PythonRoot /usr CACHE FILEPATH "Location of Python install")
 
 ExternalProject_Add(Blosc
@@ -39,10 +39,10 @@ ExternalProject_Add(Blosc
 set(CHAIN Blosc)
 
 ExternalProject_Add(Boost
-    URL https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.gz
+    URL https://sourceforge.net/projects/boost/files/boost/1.82.0/boost_1_82_0.tar.gz
     UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot}  --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
     CONFIGURE_COMMAND ""
-    PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch 
+    PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch || true
     BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam  --with_python variant=release link=shared threading=multi define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
@@ -146,9 +146,10 @@ ExternalProject_Add(OpenVDB
 set(CHAIN OpenVDB)
 
 ExternalProject_Add(Log4CPlus
-    GIT_REPOSITORY https://github.com/log4cplus/log4cplus
-    GIT_TAG REL_2_0_5
+    URL https://github.com/log4cplus/log4cplus/releases/download/REL_2_0_5/log4cplus-2.0.5.tar.xz
     PATCH_COMMAND patch -p1 -N < ${THIS_DIR}/log4plus-limit-threads.patch || true
+            COMMAND find . -name "Makefile.in" -exec touch {} +
+            COMMAND touch aclocal.m4 configure config.h.in
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ./configure --prefix ${InstallRoot}
     BUILD_COMMAND make
@@ -332,11 +333,11 @@ if(NOT NO_USD)
             -DPXR_ENABLE_PYTHON_SUPPORT=ON
             -DPXR_USE_PYTHON_3=ON
             -DPXR_USE_DEBUG_PYTHON=OFF
-            -DPYTHON_EXECUTABLE=/usr/bin/python3
-            -DPYTHON_LIBRARY=/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/libpython3.9.dylib
-            -DPYTHON_INCLUDE_DIR=/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Headers
+            -DPYTHON_EXECUTABLE=/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/bin/python3.11
+            -DPYTHON_LIBRARY=/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib
+            -DPYTHON_INCLUDE_DIR=/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/include/python3.11
             -DPYTHON_VERSION_MAJOR=3
-            -DPYTHON_VERSION_MINOR=9
+            -DPYTHON_VERSION_MINOR=11
             -DTBB_USE_DEBUG_BUILD=OFF
             -DPXR_BUILD_TESTS=OFF
             -DPXR_BUILD_EXAMPLES=OFF
@@ -421,4 +422,3 @@ ExternalProject_Add(GLFW
     DEPENDS ${CHAIN}
 )
 set(CHAIN GLFW)
-
