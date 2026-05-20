@@ -4,13 +4,18 @@ Thank you for your interest in contributing to MoonRay!  This document explains 
 
 ## Community and Discussion
 
-The [Discussions](https://github.com/OpenMoonRay/OpenMoonRay/discussions) panel of the main Open MoonRay GitHub repository is used for asking questions, starting discussions, making announcements, and general engagement with the MoonRay community.
+The MoonRay channel (`#moonray`) of the [Academy Software Foundation Slack](http://academysoftwarefdn.slack.com/) is useful for general questions, feature requests, and discussion of the MoonRay project as a whole.
+You can request an invitation to join the Academy Software Foundation Slack at https://www.aswf.io/get-involved/.
+
+The [Discussions](https://github.com/OpenMoonRay/OpenMoonRay/discussions) panel of the main Open MoonRay GitHub repository can also be used for general engagement with the MoonRay community.
 
 ## Bug Reports and Issue Tracking
 
 The [Issues](https://github.com/OpenMoonRay/OpenMoonRay/issues) panel of the main Open MoonRay GitHub repository is used to report bugs and build issues, and requesting enhancements.
 
 ## Legal Requirements
+
+MoonRay is a project of the Academy Software Foundation and follows the open source software best practice policies of the Linux Foundation.
 
 ### License
 
