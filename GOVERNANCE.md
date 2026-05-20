@@ -1,5 +1,7 @@
 # MoonRay Project Governance
 
+MoonRay is a project of the [Academy Software Foundation](https://www.aswf.io/) and relies on the ASWF governance policies, supported by the Linux Foundation.
+
 There are three primary project roles: Contributors submit code to the project; Committers approve code to be included into the project; and the Technical Steering Committee (TSC) provides overall high-level project guidance.
 
 * [Contributors](#Contributors)
@@ -59,7 +61,7 @@ A subset of the Committers forms the Technical Steering Committee (TSC), which h
 * Discussions, seeking consensus, and where necessary, voting on technical matters relating to the MoonRay project.
 * Coordinating marketing, events, and communications regarding MoonRay.
 
-The TSC elects a Chair person, who acts as the project manager, organizing meetings and providing oversight to project administration. The Chair is elected by the TSC. 
+The TSC elects a Chair person, who acts as the project manager, organizing meetings and providing oversight to project administration. The chair is also the *TAC Representative* the MoonRay project in meetings of the Technical Advisory Council of the ASWF. The Chair is elected by the TSC. 
 
 
 ### TSC Members
@@ -110,6 +112,9 @@ there is a reasonable need for privacy. The TSC meets regularly in a video
 conference call, at a cadence deemed appropriate by the TSC. The TSC Chair
 moderates the meeting, or appoints another TSC member to moderate in his or
 her absence.
+
+Scheduling and connection details may be found in the public
+[ASWF Meeting Calendar](https://www.aswf.io/meeting-calendar/).
 
 Items are added to the TSC agenda which are considered contentious or are
 modifications of governance, contribution policy, TSC membership, or release
