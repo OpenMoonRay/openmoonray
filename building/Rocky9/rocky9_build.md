@@ -21,7 +21,7 @@ mkdir -p /opt/MoonRay/installs/{bin,lib,include}
 ```bash
 sudo dnf install -y git git-lfs
 cd /opt/MoonRay/source
-git clone --recurse-submodules https://github.com/dreamworksanimation/openmoonray.git
+git clone --recurse-submodules https://github.com/OpenMoonRay/openmoonray.git
 ```
 
 Note: If building for Houdini, you'll potentially need to make the following changes before proceeding:
