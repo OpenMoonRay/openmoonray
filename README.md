@@ -29,3 +29,6 @@ You can get started building MoonRay on Linux or MacOS, or a container by readin
 ### Developer Quick Start
 
 A helpful start will be at understanding the [structure of the source code](https://docs.openmoonray.org/developer-reference/source-structure/), followed by the overall [Developer's Guide](https://docs.openmoonray.org/developer-reference/).
+
+
+Policies concerning [Governance](https://github.com/OpenMoonRay/openmoonray/blob/main/GOVERNANCE.md), [Code of Conduct](https://github.com/OpenMoonRay/openmoonray/blob/main/CODE_OF_CONDUCT.md), [Contribution](https://github.com/OpenMoonRay/openmoonray/blob/main/CONTRIBUTING.md), and the list of [Maintainers](https://github.com/OpenMoonRay/openmoonray/blob/main/MAINTAINERS.md) are available in the OpenMoonRay super project.
