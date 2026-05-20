@@ -1,8 +1,8 @@
 ![MoonRay](docs/images/moonray.png)
 
-[Website](https://openmoonray.org) | [Discussion Forum](https://github.com/dreamworksanimation/openmoonray/discussions) | [Documentation](https://docs.openmoonray.org/) | [Releases](https://github.com/dreamworksanimation/openmoonray/releases) | [License](https://www.apache.org/licenses/LICENSE-2.0)
+[Website](https://openmoonray.org) | [Discussion Forum](https://github.com/OpenMoonRay/openmoonray/discussions) | [Documentation](https://docs.openmoonray.org/) | [Releases](https://github.com/OpenMoonRay/openmoonray/releases) | [License](https://www.apache.org/licenses/LICENSE-2.0)
 
-MoonRay is an open source, production path-tracing renderer, that efficiently renders images for animation, visual effects and other uses.  MoonRay supports industry standards and libraries and was open sourced by DreamWorks, where it is in active use for their [feature film animation](https://openmoonray.org/documentation) pipeline. With MoonRay, you can take advantage of an extensive library of production-tested, physically based materials, a USD Hydra render delegate, and local, multi-machine and cloud rendering for interactive and batch rendering. It runs on CPU and hybrid GPU (XPU) hardware and offers tools for [regression testing](https://github.com/dreamworksanimation/rats), [performance monitoring](https://docs.openmoonray.org/user-reference/tools/render-profile-viewer/) and [more](https://docs.openmoonray.org/user-reference/tools/).
+MoonRay is an open source, production path-tracing renderer, that efficiently renders images for animation, visual effects and other uses.  MoonRay supports industry standards and libraries and was open sourced by DreamWorks, where it is in active use for their [feature film animation](https://openmoonray.org/documentation) pipeline. With MoonRay, you can take advantage of an extensive library of production-tested, physically based materials, a USD Hydra render delegate, and local, multi-machine and cloud rendering for interactive and batch rendering. It runs on CPU and hybrid GPU (XPU) hardware and offers tools for [regression testing](https://github.com/OpenMoonRay/rats), [performance monitoring](https://docs.openmoonray.org/user-reference/tools/render-profile-viewer/) and [more](https://docs.openmoonray.org/user-reference/tools/).
 
 ### License
 
@@ -18,7 +18,7 @@ This is the top-level repository for the MoonRay project. The actual source code
 
 To clone this repository along with the submodules:
 
-```git clone --recurse-submodules https://github.com/dreamworksanimation/openmoonray.git```
+```git clone --recurse-submodules https://github.com/OpenMoonRay/openmoonray.git```
 
 ### Build and Run
 
