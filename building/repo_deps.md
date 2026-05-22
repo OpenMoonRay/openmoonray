@@ -3,7 +3,7 @@ title: Open MoonRay repositories
 ---
 # Open MoonRay repositories
 
-The following table lists the Open MoonRay repositories and their requirements.
+The following table lists the MoonRay repositories and their requirements.
 "Internal Dependencies" are dependencies on other MoonRay repositories, "External Dependencies" are third-party packages that must be installed prior to build.
 
 As well as the dependencies listed here, you will need an appropriate C++ compiler and CMake itself.

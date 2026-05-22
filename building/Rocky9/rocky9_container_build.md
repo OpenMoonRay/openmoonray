@@ -19,7 +19,7 @@ git lfs install
 To clone the source from the github repo (on the host), use this git command:
 
 ```bash
-> git clone --recurse-submodules https://github.com/dreamworksanimation/openmoonray.git 
+> git clone --recurse-submodules https://github.com/OpenMoonRay/openmoonray.git 
 ```
 You can place the clone anywhere : the rest of this document calls the directory you have cloned openmoonray into (on the host machine) ***openmoonray-dir***. It will be mounted at */source* inside the container.
 
