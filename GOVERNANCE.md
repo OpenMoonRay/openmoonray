@@ -51,7 +51,7 @@ The TSC may periodically review the Committer list to identify inactive Committe
 
 ## Technical Steering Committee
 
-A subset of the Committers forms the Technical Steering Committee (TSC), which has final authority over the project. As defined in the project charter, TSC responsibilities include, but are not limited to:
+A subset of the Committers forms the Technical Steering Committee (TSC), which has final authority over the project. As defined in the project [charter](https://lfx-cdn-prod.s3.us-east-1.amazonaws.com/project-artifacts/moonray/moonray_Charter.pdf?v=1773345969627), TSC responsibilities include, but are not limited to:
 
 * Coordinating technical direction of the project.
 * Project governance and contribution policy.
@@ -61,7 +61,7 @@ A subset of the Committers forms the Technical Steering Committee (TSC), which h
 * Discussions, seeking consensus, and where necessary, voting on technical matters relating to the MoonRay project.
 * Coordinating marketing, events, and communications regarding MoonRay.
 
-The TSC elects a Chair person, who acts as the project manager, organizing meetings and providing oversight to project administration. The chair is also the *TAC Representative* the MoonRay project in meetings of the Technical Advisory Council of the ASWF. The Chair is elected by the TSC. 
+The TSC elects a Chair person, who acts as the project manager, organizing meetings and providing oversight to project administration. The chair is also the *TAC Representative* the MoonRay project in meetings of the Technical Advisory Council of the ASWF. The Chair is elected by the TSC.
 
 
 ### TSC Members
