@@ -29,7 +29,7 @@ patches as quickly as possible.
 
 ### Software Features
 
-- MoonRay and it's related CLI tools read and execute RDLA files in a Lua
+- MoonRay and its related CLI tools read and execute RDLA files in a Lua
   interpreter. These files are expected to be provided by the user, and are not
   expected to be provided by untrusted sources. If you are using RDLA files from
   untrusted sources, you should be aware that they could cause any type of issue
