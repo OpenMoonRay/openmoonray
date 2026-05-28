@@ -8,7 +8,7 @@ security vulnerabilities.
 | Version / branch  | Supported                                            |
 | ---------  | ---------------------------------------------------- |
 | main       | :white_check_mark: :construction: ALL fixes immediately, but this is a branch under development with a frequently unstable ABI and occasionally unstable API. |
-| 3.6.0.x    | :white_check_mark: All fixes that can be backported without breaking ABI compatibility. New tagged releases monthly. |
+| 3.6.0.x    | :white_check_mark: All fixes that can be backported without breaking ABI compatibility. |
 | <= 3.6.0.1 | :x: No longer receiving patches of any kind. |
 
 
