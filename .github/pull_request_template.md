@@ -3,7 +3,7 @@
 <!-- major|minor|patch|build -->
 
 ## Issues/Tickets:
-<!-- GitHub example: #1 -->
+<!-- GitHub example: OpenMoonRay/openmoonray#1 -->
 <!-- JIRA example: MOONRAY-0001 -->
 
 ## Release notes comment:
