@@ -123,3 +123,6 @@ Most MoonRay modules have a companion `tests` folder within the repository, cont
 Additionally, MoonRay provides a [Render Acceptance Test Suite (RATS)](https://github.com/OpenMoonRay/rats) to catch visual regressions caused by changes to the codebase before those changes are deployed into a production environment. It works by comparing canonical images rendered with the previously sanctioned version of the renderer to images rendered with a development version.
 
 All contributions that may impact the resulting look of rendered images must pass RATS before being accepted. Unintentional look changes must be addressed in the contributed code. Intentional look changes must be approved by the TSC, and updated canonical reference images must be provided such that the tests continue to pass.
+
+## Security Policy
+Security issues should be reported privately to the project administrators, see [Security Policy](SECURITY.md) for details. Do not report security issues through GitHub Issues or Pull Requests, as those are public channels and may allow bad actors to take advantage of the issue before it is resolved.
