@@ -45,7 +45,7 @@ patches as quickly as possible.
 
 It is expected that maliciously crafted plugins, or RDLA files, could cause any
 type of issue that would ordinarily be causable as the result of a Lua file load,
-or an arbitrary code execution. Do not use or consume packages or context files
+or an arbitrary code execution. Do not use or consume plugins or scene files
 provided from untrusted sources without undue validation, care, or sandboxing.
 
 
