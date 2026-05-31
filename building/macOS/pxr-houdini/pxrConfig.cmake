@@ -2,7 +2,7 @@
 # Modified to use the version of USD with headers in $env{PXR_INCLUDE_PREFIX}
 # and libs in $env{PXR_LIB_PREFIX}, with dependencies installed to $env{PXR_DEPS_PREFIX}
 # $env{PXR_BOOST_PYTHON_LIB} must be set to the location of the boost_python so used by USD
-# (Houdini names it libhboost_python39...)
+# (Houdini names it libhboost_python311...)
 
 # Defines the following variables:
 # PXR_MAJOR_VERSION - Major version number.

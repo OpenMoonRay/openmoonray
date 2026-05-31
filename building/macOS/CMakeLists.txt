@@ -25,6 +25,15 @@ set(THIS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(InstallRoot ${rootSrcDir}/../../../../installs CACHE FILEPATH "Install root for dependencies")
 set(PythonVer 3.11 CACHE STRING "Python version (n.m), e.g. 3.6")
 set(PythonRoot /usr CACHE FILEPATH "Location of Python install")
+if(DEFINED ENV{HOUDINI_INSTALL_DIR})
+    set(_defaultHoudiniInstallDir "$ENV{HOUDINI_INSTALL_DIR}")
+elseif(DEFINED ENV{HFS})
+    file(REAL_PATH "$ENV{HFS}/../../../../.." _defaultHoudiniInstallDir)
+else()
+    set(_defaultHoudiniInstallDir "/Applications/Houdini/Houdini20.5.684")
+endif()
+set(HOUDINI_INSTALL_DIR "${_defaultHoudiniInstallDir}" CACHE PATH "Houdini install root")
+set(HoudiniPythonRoot "${HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/${PythonVer}")
 
 ExternalProject_Add(Blosc
     GIT_REPOSITORY https://github.com/Blosc/c-blosc
@@ -43,7 +52,7 @@ ExternalProject_Add(Boost
     UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot}  --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
     CONFIGURE_COMMAND ""
     PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch || true
-    BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam  --with_python variant=release link=shared threading=multi define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
+    BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam --with-python python=${PythonVer} variant=release link=shared threading=multi architecture=arm address-model=64 define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
     DEPENDS ${CHAIN}
@@ -333,9 +342,9 @@ if(NOT NO_USD)
             -DPXR_ENABLE_PYTHON_SUPPORT=ON
             -DPXR_USE_PYTHON_3=ON
             -DPXR_USE_DEBUG_PYTHON=OFF
-            -DPYTHON_EXECUTABLE=/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/bin/python3.11
-            -DPYTHON_LIBRARY=/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib
-            -DPYTHON_INCLUDE_DIR=/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/include/python3.11
+            -DPYTHON_EXECUTABLE=${HoudiniPythonRoot}/bin/python${PythonVer}
+            -DPYTHON_LIBRARY=${HoudiniPythonRoot}/lib/libpython${PythonVer}.dylib
+            -DPYTHON_INCLUDE_DIR=${HoudiniPythonRoot}/include/python${PythonVer}
             -DPYTHON_VERSION_MAJOR=3
             -DPYTHON_VERSION_MINOR=11
             -DTBB_USE_DEBUG_BUILD=OFF

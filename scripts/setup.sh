@@ -20,7 +20,7 @@ echo "Setting up release in ${omr_root}"
 export PATH=${omr_root}/bin:${PATH}
 
 # need python modules for the USD interface and for the RATS tests
-export PYTHONPATH=${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib64/python3.9/site-packages/:${PYTHONPATH}
+export PYTHONPATH=${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib64/python3.11/site-packages/:${PYTHONPATH}
 
 
 # tell moonray where to find dsos

@@ -1,6 +1,6 @@
 using python : 3.11
-  : "/usr/bin/python3"
-  : "/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/include/python3.11"
-  : "/Applications/Houdini/Houdini21.0.671/Frameworks/Python.framework/Versions/3.11/lib"
+  : "/Applications/Houdini/Houdini20.5.684/Frameworks/Houdini.framework/Versions/Current/Resources/bin/hython"
+  : "/Applications/Houdini/Houdini20.5.684/Frameworks/Python.framework/Versions/3.11/include/python3.11"
+  : "/Applications/Houdini/Houdini20.5.684/Frameworks/Python.framework/Versions/3.11/lib"
   ;
 using clang : : : <compileflags>-"arch arm64" <linkflags>"-arch arm64" ;
