@@ -64,6 +64,10 @@ TAC](https://github.com/AcademySoftwareFoundation/tac/blob/main/process/contribu
 Note that if you have signed a CLA for a different ASWF or LF project, that
 CLA doesn't apply here and you need to sign for this project specifically.
 
+Note that all commits prior to April 23, 2026 were contributed by DreamWorks Animation
+or under the DreamWorks Animation CLA, and all commits after that date are contributed
+under the MoonRay CLA.
+
 ### Developer Certificate of Origin (DCO)
 
 The MoonRay project requires the use of the [Developer Certificate of Origin 1.1 (DCO)](https://developercertificate.org/), which affirms that the contribution was created by you the contributor, and that you have the rights to contribute the changes under the open source license. It is the same mechanism that the  [Linux® Kernel](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n416) and many other communities use to manage code contributions. The DCO is considered one of the simplest tools for sign offs from contributors as the representations are meant to be easy to read and indicating signoff is done as a part of the commit message.
