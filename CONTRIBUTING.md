@@ -64,9 +64,13 @@ TAC](https://github.com/AcademySoftwareFoundation/tac/blob/main/process/contribu
 Note that if you have signed a CLA for a different ASWF or LF project, that
 CLA doesn't apply here and you need to sign for this project specifically.
 
-Note that all commits prior to April 23, 2026 were contributed by DreamWorks Animation
-or under the DreamWorks Animation CLA, and all commits after that date are contributed
-under the MoonRay CLA.
+On April 23, 2026, stewardship of the MoonRay repositories transferred from DreamWorks
+Animation to the Academy Software Foundation. Contributions made before that date were
+authored either by DreamWorks Animation employees or by third-party contributors under
+the DreamWorks Animation CLA process then in effect. Those historical contributions
+remain part of MoonRay and are distributed under the project's [Apache 2.0
+license](LICENSE). Contributions submitted on or after April 23, 2026 are subject to
+the MoonRay/ASWF EasyCLA requirements described above.
 
 ### Developer Certificate of Origin (DCO)
 
@@ -80,6 +84,12 @@ Signed-off-by: John Doe <john.doe@example.com>
 You can include this automatically when you commit a change to your local git repository using `git commit -s`. You might also want to leverage this [command line tool](https://github.com/coderanger/dco) for automatically adding the signoff message on commits.
 
 [Read more about MoonRay legal and licensing concerns for contributions here](https://docs.openmoonray.org/license/).
+
+The DCO `Signed-off-by` requirement applies to contributions submitted on or after
+April 23, 2026. Historical commits made before that date may not include a
+`Signed-off-by` trailer, as DCO sign-off was not part of DreamWorks Animation's
+contribution process at that time. Those historical contributions were accepted under
+the project's prior contribution process and remain in the repository.
 
 ## Repository Structure
 
