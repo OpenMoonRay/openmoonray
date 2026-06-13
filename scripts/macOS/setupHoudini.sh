@@ -1,5 +1,5 @@
 omr_install_dir=/Applications/MoonRay/installs/openmoonray
-houdini_install_dir=${HOUDINI_INSTALL_DIR:-/Applications/Houdini/Houdini20.5.684}
+houdini_install_dir=${HOUDINI_INSTALL_DIR:-/Applications/Houdini/Houdini20.5.584}
 houdini_fallback="${houdini_install_dir}/Frameworks/Houdini.framework/Versions/Current/Resources/houdini"
 
 # save/restore PYTHONPATH, since Houdini runtime can be sensitive to non-Houdini site-packages
