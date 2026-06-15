@@ -145,30 +145,6 @@ ExternalProject_Add(OpenImageDenoise
 )
 set(CHAIN OpenImageDenoise)
 
-# NEW, make sure this isn't before OIIO or it breaks OIIO
-ExternalProject_Add(TBB
-    URL https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2020.3.3.tar.gz
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND make ${JOBS_ARG} arch=amd64
-    INSTALL_COMMAND bash -c "cp build/*_release/libtbb*.* ${InstallRoot}/lib"
-            COMMAND bash -c "cp -r include/tbb ${InstallRoot}/include"
-    DEPENDS ${CHAIN}
-)
-set(CHAIN TBB)
-
-ExternalProject_Add(OpenImageDenoise
-    URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.3.3/oidn-2.3.3.src.tar.gz
-    INSTALL_DIR ${InstallRoot}
-    CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DISPC_EXECUTABLE=<INSTALL_DIR>/bin/ispc
-        -DTBB_ROOT=<INSTALL_DIR>
-        -DOIDN_APPS=OFF
-    DEPENDS ${CHAIN}
-)
-set(CHAIN OpenImageDenoise)
-
 if(NOT NO_USD)
     ExternalProject_Add(USD
         GIT_REPOSITORY https://github.com/PixarAnimationStudios/USD
