@@ -29,18 +29,6 @@ layout:
   /usr/share/X11:
     bind: $SNAP/usr/share/X11
 
-package-repositories:
-  - type: apt
-    formats: [deb]
-    architectures: [amd64]
-    path: /
-    key-id: EB693B3035CD5710E231E123A4B469963BF863CC
-    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64
-
-layout:
-  /usr/share/X11:
-    bind: $SNAP/usr/share/X11
-
 parts:
   openmoonray:
     plugin: cmake
