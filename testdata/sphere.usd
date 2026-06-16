@@ -29,9 +29,9 @@ def Material "checkerboard"
 
         def Shader "baseMtl"
         {
-                uniform token info:id = "BaseMaterial"
+                uniform token info:id = "DwaBaseMaterial"
                 color4f outputs:surface
-                color3f inputs:diffuse_color.connect = <../checkerboardMap.outputs:out>
+                color3f inputs:albedo.connect = <../checkerboardMap.outputs:out>
         }
         def Shader "checkerboardMap"
         {
