@@ -8,10 +8,19 @@ omr_root="$(realpath ${sourcedir}/..)"
 
 # Walk up to find the top-level install dir where the dependencies are installed
 install_root=${omr_root}
-while [ "$(basename ${install_root})" != "installs" ]
+while [ "$(basename ${install_root})" != "installs" ] && [ "${install_root}" != "/" ]
 do
     install_root=$(dirname ${install_root})
 done
+if [ "$(basename ${install_root})" != "installs" ]; then
+    sibling_installs="$(dirname "$(dirname "${omr_root}")")/installs"
+    if [ -d "${sibling_installs}" ]; then
+        install_root="$(realpath "${sibling_installs}")"
+    else
+        echo "Warning: could not find parent installs directory for ${omr_root}; using ${omr_root}"
+        install_root=${omr_root}
+    fi
+fi
 
 echo "Found install root at ${install_root}"
 echo "Setting up release in ${omr_root}"
@@ -19,8 +28,35 @@ echo "Setting up release in ${omr_root}"
 # NB required for Arras to function (it needs to find execComp)
 export PATH=${omr_root}/bin:${PATH}
 
-# need python modules for the USD interface and for the RATS tests
-export PYTHONPATH=${omr_root}/lib/python:${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib64/python3.11/site-packages/:${PYTHONPATH}
+prepend_unique_path() {
+    add_path="$1"
+    current="${2:-}"
+    case ":${current}:" in
+        *":${add_path}:"*) echo "${current}" ;;
+        *)
+            if [ -n "${current}" ]; then
+                echo "${add_path}:${current}"
+            else
+                echo "${add_path}"
+            fi
+            ;;
+    esac
+}
+
+prepend_existing_path() {
+    add_path="$1"
+    current="${2:-}"
+    if [ -d "${add_path}" ]; then
+        prepend_unique_path "${add_path}" "${current}"
+    else
+        echo "${current}"
+    fi
+}
+
+# Need Python modules for the USD interface and for the RATS tests. Only add
+# paths that exist so source-tree setup does not inject stale system locations.
+export PYTHONPATH="$(prepend_existing_path "${omr_root}/lib/python" "${PYTHONPATH}")"
+export PYTHONPATH="$(prepend_existing_path "${omr_root}/lib64/python3.11/site-packages" "${PYTHONPATH}")"
 
 
 # tell moonray where to find dsos
@@ -43,7 +79,11 @@ export PXR_PLUGIN_PATH=${omr_root}/plugin/pxr:${PXR_PLUGIN_PATH} # for legacy DW
 # create shader descriptions if they don't exist
 if [ ! -d "${omr_root}/shader_json" ]
 then
-    echo "Building shader descriptions..."
-    ${omr_root}/bin/rdl2_json_exporter --out ${omr_root}/shader_json/ --sparse
-    echo "...done"
+    if [ -x "${omr_root}/bin/rdl2_json_exporter" ]; then
+        echo "Building shader descriptions..."
+        ${omr_root}/bin/rdl2_json_exporter --out ${omr_root}/shader_json/ --sparse
+        echo "...done"
+    else
+        echo "Warning: ${omr_root}/bin/rdl2_json_exporter not found; shader descriptions were not generated"
+    fi
 fi
