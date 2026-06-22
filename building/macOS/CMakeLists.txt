@@ -225,7 +225,7 @@ set(CHAIN embree)
 
 ExternalProject_Add(OpenColorIO
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/OpenColorIO
-    GIT_TAG 056b7b0cb0d087961e9dba75104820e44faf52a1 # v2.0.2
+    GIT_TAG b35fb73b8674176098d3084deaa9da3d111d72d1 # v2.3.0
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         -DCMAKE_PREFIX_PATH:PATH=${InstallRoot}

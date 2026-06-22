@@ -39,6 +39,60 @@ prepend_existing_path() {
     fi
 }
 
+resolve_ocio_package_value() {
+    local raw_value="$1"
+    local value="${raw_value}"
+
+    case "${value}" in
+        \${OCIO-*})
+            value="${value#\$\{OCIO-}"
+            value="${value%\}}"
+            ;;
+    esac
+
+    value="${value//\$HOME/${HOME}}"
+    case "${value}" in
+        "~/"*) value="${HOME}/${value#~/}" ;;
+    esac
+    echo "${value}"
+}
+
+set_ocio_from_houdini_packages() {
+    if [ -n "${OCIO:-}" ]; then
+        return
+    fi
+
+    local package_dirs="${HOUDINI_PACKAGE_DIR:-${HOME}/Library/Preferences/houdini/20.5/packages:${houdini_install_dir}/Frameworks/Houdini.framework/Versions/Current/Resources/packages}"
+    local package_dir
+    while IFS= read -r package_dir; do
+        if [ ! -d "${package_dir}" ]; then
+            continue
+        fi
+        local package_file
+        while IFS= read -r package_file; do
+            if [ ! -f "${package_file}" ] || ! grep -q '"OCIO"' "${package_file}"; then
+                continue
+            fi
+            local raw_value
+            raw_value="$(sed -nE 's/.*"OCIO"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' "${package_file}" | head -1)"
+            if [ -z "${raw_value}" ]; then
+                continue
+            fi
+            local candidate
+            candidate="$(resolve_ocio_package_value "${raw_value}")"
+            if [ -f "${candidate}" ]; then
+                export OCIO="$(realpath "${candidate}")"
+                return
+            fi
+        done < <(find "${package_dir}" -maxdepth 1 -type f -name '*.json' 2>/dev/null)
+    done < <(printf '%s\n' "${package_dirs}" | tr ':' '\n')
+}
+
+# Houdini loads package files itself, but standalone MoonRay tools launched from
+# this shell do not. Mirror a package-authored OCIO default without overriding an
+# explicitly supplied OCIO so husk/hd_usd2rdl use the same color config as Houdini.
+set_ocio_from_houdini_packages
+
 # Preserve any existing USD plugin search path while guaranteeing MoonRay plugin location is present.
 export PXR_PLUGINPATH_NAME="$(prepend_unique_path "${omr_install_dir}/plugin/pxr" "${PXR_PLUGINPATH_NAME}")"
 export PXR_PLUGIN_PATH="$(prepend_unique_path "${omr_install_dir}/plugin/pxr" "${PXR_PLUGIN_PATH}")"
