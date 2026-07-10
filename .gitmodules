@@ -1,76 +1,76 @@
 [submodule "arras/distributed/minicoord"]
 	path = arras/distributed/minicoord
-	url = ../minicoord
+	url = https://github.com/dreamworksanimation/minicoord
 	branch = main
 [submodule "arras/arras4_core"]
 	path = arras/arras4_core
-	url = ../arras4_core
+	url = https://github.com/dreamworksanimation/arras4_core
 	branch = main
 [submodule "moonray/scene_rdl2"]
 	path = moonray/scene_rdl2
-	url = ../scene_rdl2
+	url = https://github.com/dreamworksanimation/scene_rdl2
 	branch = main
 [submodule "moonray/mcrt_denoise"]
 	path = moonray/mcrt_denoise
-	url = ../mcrt_denoise
+	url = https://github.com/dreamworksanimation/mcrt_denoise
 	branch = main
 [submodule "moonray/moonray"]
 	path = moonray/moonray
-	url = ../moonray
+	url = https://github.com/dreamworksanimation/moonray
 	branch = main
 [submodule "moonray/moonshine"]
 	path = moonray/moonshine
-	url = ../moonshine
+	url = https://github.com/dreamworksanimation/moonshine
 	branch = main
 [submodule "moonray/moonshine_usd"]
 	path = moonray/moonshine_usd
-	url = ../moonshine_usd
+	url = https://github.com/dreamworksanimation/moonshine_usd
 	branch = main
 [submodule "moonray/moonray_arras/mcrt_dataio"]
 	path = moonray/moonray_arras/mcrt_dataio
-	url = ../mcrt_dataio
+	url = https://github.com/dreamworksanimation/mcrt_dataio
 	branch = main
 [submodule "moonray/moonray_arras/mcrt_computation"]
 	path = moonray/moonray_arras/mcrt_computation
-	url = ../mcrt_computation
+	url = https://github.com/dreamworksanimation/mcrt_computation
 	branch = main
 [submodule "moonray/moonray_arras/mcrt_messages"]
 	path = moonray/moonray_arras/mcrt_messages
-	url = ../mcrt_messages
+	url = https://github.com/dreamworksanimation/mcrt_messages
 	branch = main
 [submodule "moonray/moonray_gui"]
 	path = moonray/moonray_gui
-	url = ../moonray_gui
+	url = https://github.com/dreamworksanimation/moonray_gui
 	branch = main
 [submodule "moonray/hydra/hdMoonray"]
 	path = moonray/hydra/hdMoonray
-	url = ../hdMoonray
+	url = https://github.com/dreamworksanimation/hdMoonray
 	branch = main
 [submodule "arras/arras_render"]
 	path = arras/arras_render
-	url = ../arras_render
+	url = https://github.com/dreamworksanimation/arras_render
 	branch = main
 [submodule "arras/distributed/arras4_node"]
 	path = arras/distributed/arras4_node
-	url = ../arras4_node
+	url = https://github.com/dreamworksanimation/arras4_node
 	branch = main
 [submodule "cmake_modules"]
 	path = cmake_modules
-	url = ../cmake_modules
+	url = https://github.com/dreamworksanimation/cmake_modules
 	branch = main
 [submodule "moonray/hydra/moonray_sdr_plugins"]
 	path = moonray/hydra/moonray_sdr_plugins
-	url = ../moonray_sdr_plugins
+	url = https://github.com/dreamworksanimation/moonray_sdr_plugins
 	branch = main
 [submodule "moonray/moonray_dcc_plugins"]
 	path = moonray/moonray_dcc_plugins
-	url = ../moonray_dcc_plugins
+	url = https://github.com/dreamworksanimation/moonray_dcc_plugins
 	branch = main
 [submodule "moonray/render_profile_viewer"]
 	path = moonray/render_profile_viewer
-	url = ../render_profile_viewer.git
+	url = https://github.com/dreamworksanimation/render_profile_viewer.git
 	branch = main
 [submodule "rats"]
 	path = rats
-	url = ../rats
+	url = https://github.com/dreamworksanimation/rats
 	branch = main

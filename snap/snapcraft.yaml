@@ -1,0 +1,418 @@
+name: openmoonray
+base: core24
+adopt-info: openmoonray
+title: MoonRay
+summary: MoonRay is an open-source state-of-the-art production path tracer
+description: |
+  MoonRay is an Academy Software Foundation project, originally developed at
+  DreamWorks Animation. This multi-award-winning, state-of-the-art production
+  MCRT renderer has been used on feature films such as How to Train Your
+  Dragon: The Hidden World, The Bad Guys, Puss In Boots: The Last Wish, 
+  Kung Fu Panda 4, The Wild Robot, The Bad Guys 2, and future titles.
+
+  MoonRay continues in active development and includes an extensive library of
+  production-tested, physically based materials, a USD Hydra render delegate,
+  multi-machine and cloud rendering via the Arras distributed computation
+  framework.
+
+license: Apache-2.0
+source-code: https://github.com/OpenMoonRay/openmoonray
+contact: https://github.com/OpenMoonRay/openmoonray/issues
+issues: https://github.com/OpenMoonRay/openmoonray/issues
+website: https://openmoonray.org/
+icon: snap/gui/logo.png
+
+grade: stable
+confinement: strict
+platforms:
+  amd64:
+
+package-repositories:
+  - type: apt
+    formats: [deb]
+    architectures: [amd64]
+    path: /
+    key-id: EB693B3035CD5710E231E123A4B469963BF863CC
+    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64
+
+layout:
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
+
+parts:
+  openmoonray:
+    plugin: cmake
+    source: .
+    build-packages:
+      - git
+      - git-lfs
+      - libopengl-dev
+      - libglx-dev
+      - libglvnd-dev
+      - pybind11-dev
+      - python3-dev
+      - bison
+      - flex
+      - wget
+      - libgif-dev
+      - libmng-dev
+      - libtiff-dev
+      - libjpeg-turbo8-dev
+      - libatomic1
+      - libuuid1
+      - libssl-dev
+      - libcurl4-openssl-dev
+      - libfreetype-dev
+      - zlib1g-dev
+      - libcgroup-dev
+      - libblosc-dev
+      - libboost-chrono-dev
+      - libboost-date-time-dev
+      - libboost-filesystem-dev
+      - libboost-python-dev
+      - libboost-program-options-dev
+      - libboost-regex-dev
+      - libboost-thread-dev
+      - libboost-system-dev
+      - lua5.4
+      - liblua5.4-dev
+      - liblog4cplus-dev
+      - libcppunit-dev
+      - libtbb-dev
+      - libopenvdb-dev
+      - python3-numpy
+      - gcc-9
+      - g++-9
+      - libsquish-dev
+      - libturbojpeg0-dev
+      - libdcmtk-dev
+      - libheif-dev
+      - libraw-dev
+      - libptexenc-dev
+      - libopencv-dev
+      - libopenjp2-7-dev
+      - qtbase5-dev
+      - libqt5opengl5-dev
+      - clang-format
+      - python3-jinja2
+      - uuid-dev
+      - libmicrohttpd-dev
+      - qtscript5-dev
+      - libnsl-dev
+      - nvidia-cuda-toolkit
+      - nvidia-cuda-dev
+      - ispc
+      - execstack
+      - libwayland-dev # Needed for GLFW
+      - libxkbcommon-dev # Needed for GLFW
+      - libxrandr-dev # Needed for GLFW
+      - libxinerama-dev # Needed for GLFW
+      - libxcursor-dev # Needed for GLFW
+      - libxi-dev # Needed for GLFW
+    stage-packages:
+      - libaec0
+      - libaom3
+      - libarmadillo12
+      - libarpack2t64
+      - libatomic1
+      - libavcodec60
+      - libavformat60
+      - libavutil58
+      - libblas3
+      - libblosc1
+      - libbluray2
+      - libboost-filesystem1.83.0
+      - libboost-iostreams1.83.0
+      - libboost-program-options1.83.0
+      - libboost-thread1.83.0
+      - libcairo-gobject2
+      - libcairo2
+      - libcfitsio10t64
+      - libcharls2
+      - libchromaprint1
+      - libcjson1
+      - libcodec2-1.2
+      - libcppunit-1.15-0
+      - libcurl3t64-gnutls
+      - libcurl4t64
+      - libdatrie1
+      - libdav1d7
+      - libdc1394-25
+      - libdcmtk17t64
+      - libdeflate0
+      - libdouble-conversion3
+      - libdw1t64
+      - libexif12
+      - libfontconfig1
+      - libfreexl1
+      - libfribidi0
+      - libfyba0t64
+      - libgdal34t64
+      - libgdcm3.0t64
+      - libgdk-pixbuf-2.0-0
+      - libgeos-c1t64
+      - libgeos3.12.1t64
+      - libgeotiff5
+      - libgfortran5
+      - libgif7
+      - libgl1
+      - libglvnd0
+      - libglx0
+      - libgme0
+      - libgomp1
+      - libgphoto2-6t64
+      - libgphoto2-port12t64
+      - libgraphite2-3
+      - libgsm1
+      - libgstreamer-plugins-base1.0-0
+      - libgstreamer1.0-0
+      - libharfbuzz0b
+      - libhdf4-0-alt
+      - libhdf5-103-1t64
+      - libhdf5-hl-100t64
+      - libheif1
+      - libhwy1t64
+      - libicu74
+      - libimath-3-1-29t64
+      - libjbig0
+      - libjpeg-turbo8
+      - libjxl0.7
+      - libkmlbase1t64
+      - libkmldom1t64
+      - libkmlengine1t64
+      - liblapack3
+      - liblcms2-2
+      - libldap2
+      - liblerc4
+      - liblog4cplus-2.0.5t64
+      - libltdl7
+      - liblua5.4-0
+      - libmbedcrypto7t64
+      - libmd4c0
+      - libmicrohttpd12t64
+      - libminizip1t64
+      - libmp3lame0
+      - libmpg123-0t64
+      - libmysqlclient21
+      - libnetcdf19t64
+      - libnghttp2-14
+      - libnorm1t64
+      - libnspr4
+      - libnss3
+      - libnuma1
+      - libodbc2
+      - libodbcinst2
+      - libogdi4.1
+      - libogg0
+      - libopencv-core406t64
+      - libopencv-imgcodecs406t64
+      - libopencv-imgproc406t64
+      - libopencv-videoio406t64
+      - libopenexr-3-1-30
+      - libegl1
+      - libopengl0
+      - libopenjp2-7
+      - libopenmpt0t64
+      - libopenvdb10.0t64
+      - libopus0
+      - liborc-0.4-0t64
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpcre2-16-0
+      - libpgm-5.3-0t64
+      - libpixman-1-0
+      - libpoppler134
+      - libpq5
+      - libproj25
+      - libpsl5t64
+      - libqhull-r8.0
+      - libqt5core5t64
+      - libqt5gui5t64
+      - libqt5opengl5t64
+      - libqt5script5
+      - libqt5widgets5t64
+      - librabbitmq4
+      - librav1e0
+      - libraw1394-11
+      - libraw23t64
+      - librist4
+      - librsvg2-2
+      - librtmp1
+      - librttopo1
+      - libsasl2-2
+      - libsharpyuv0
+      - libshine3
+      - libsnappy1v5
+      - libsodium23
+      - libsoxr0
+      - libspatialite8t64
+      - libspeex1
+      - libsrt1.5-gnutls
+      - libssh-4
+      - libssh-gcrypt-4
+      - libsuperlu6
+      - libsvtav1enc1d1
+      - libswresample4
+      - libswscale7
+      - libsz2
+      - libtbb12
+      - libthai0
+      - libtheora0
+      - libtiff6
+      - libtwolame0
+      - libudfread0
+      - libunwind8
+      - liburiparser1
+      - libusb-1.0-0
+      - libva-drm2
+      - libva-x11-2
+      - libva2
+      - libvdpau1
+      - libvorbis0a
+      - libvorbisenc2
+      - libvorbisfile3
+      - libvpl2
+      - libvpx9
+      - libwebp7
+      - libwebpdemux2
+      - libwebpmux3
+      - libx11-6
+      - libx11-xcb1
+      - libx264-164
+      - libx265-199
+      - libxau6
+      - libxcb-dri3-0
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcb1
+      - libxdmcp6
+      - libxerces-c3.2t64
+      - libxext6
+      - libxfixes3
+      - libxml2
+      - libxrender1
+      - libxvidcore4
+      - libzmq5
+      - libzvbi0t64
+      - ocl-icd-libopencl1
+      - libpython3.12t64
+      - libze1
+      - libboost-python1.83.0
+      - qtwayland5
+      - xkb-data
+    build-environment:
+      - CC: /usr/bin/gcc-9
+      - CXX: /usr/bin/g++-9
+      - PYTHON_VERSION: 3.12
+    override-pull: |
+      craftctl default
+      VERSION=$(grep '^\s*_version' package.py | awk -F "'" '{print $2}')
+      echo $VERSION
+      craftctl set version=$(echo $VERSION)
+    override-build: |
+      mkdir -p /opt/MoonRay/{installs,build,build-deps,source}
+      mkdir -p /opt/MoonRay/installs/{bin,lib,include}
+      cd /opt/MoonRay/build-deps
+      cmake -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL $CRAFT_PART_SRC/building/Ubuntu24/
+      cmake --build . -- -j $(nproc)
+      cd $CRAFT_PART_SRC
+      cmake --preset ubuntu24-release -DMOONRAY_USE_OPTIX=NO -DMOONRAY_BUILD_TESTING=NO
+      cmake --build --preset ubuntu24-release -- -j $(nproc)
+      cp -rp $CRAFT_PART_SRC/../../installs/* /opt/MoonRay/installs/
+      cp -rp /opt $CRAFT_PART_INSTALL/
+      cp $CRAFT_PROJECT_DIR/snap/local/desktop-launch $CRAFT_PART_INSTALL/
+      chmod a+x $CRAFT_PART_INSTALL/desktop-launch
+      execstack --clear-execstack $CRAFT_PART_INSTALL/opt/MoonRay/installs/openmoonray/bin/moonray_gui
+      execstack --clear-execstack $CRAFT_PART_INSTALL/opt/MoonRay/installs/openmoonray/lib/librendering_pbr.so
+    prime:
+      - desktop-launch
+      - opt
+      - usr/lib
+      - usr/share/X11
+      - usr/share/glvnd
+      - etc/glvnd
+      - -opt/MoonRay/build-deps
+      - -opt/MoonRay/installs/include
+      - -opt/MoonRay/installs/openmoonray/include
+      - -opt/MoonRay/installs/lib/cmake
+      - -opt/MoonRay/installs/openmoonray/lib/cmake
+
+apps:
+  moonray:
+    command: opt/MoonRay/installs/openmoonray/bin/moonray -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
+    environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  gui:
+    command: opt/MoonRay/installs/openmoonray/bin/moonray_gui -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
+    command-chain: [ desktop-launch ]
+    environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  gui-v2:
+    command: opt/MoonRay/installs/openmoonray/bin/moonray_gui_v2 -dso_path $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso -auto_affinity off
+    command-chain: [ desktop-launch ]
+    environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  hd-render:
+    command: opt/MoonRay/installs/openmoonray/bin/hd_render
+    command-chain: [ desktop-launch ]
+    environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+      PYTHONPATH: $SNAP/opt/MoonRay/installs/lib/python:$SNAP/opt/MoonRay/installs/lib/python3.12/site-packages
+      PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
+      ARRAS_SESSION_PATH: $SNAP/opt/MoonRay/installs/openmoonray/sessions
+      RDL2_DSO_PATH: $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
+  hd-usd2rdl:
+    command: opt/MoonRay/installs/openmoonray/bin/hd_usd2rdl
+    command-chain: [ desktop-launch ]
+    environment:
+      PATH: $SNAP/usr/bin:$SNAP/bin:/usr/bin:/bin
+      LD_LIBRARY_PATH: $SNAP/opt/MoonRay/installs/openmoonray/lib:$SNAP/opt/MoonRay/installs/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu/lapack:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+      PYTHONPATH: $SNAP/opt/MoonRay/installs/lib/python:$SNAP/opt/MoonRay/installs/lib/python3.12/site-packages
+      PXR_PLUGINPATH_NAME: $SNAP/opt/MoonRay/installs/lib/usd:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr/hd_moonray:$SNAP/opt/MoonRay/installs/openmoonray/plugin/pxr:$SNAP/opt/MoonRay/installs/plugin/usd
+      ARRAS_SESSION_PATH: $SNAP/opt/MoonRay/installs/openmoonray/sessions
+      RDL2_DSO_PATH: $SNAP/opt/MoonRay/installs/openmoonray/rdl2dso
+    plugs:
+      - home
+      - network
+      - desktop
+      - x11
+      - wayland
+      - hardware-observe
+      - opengl
