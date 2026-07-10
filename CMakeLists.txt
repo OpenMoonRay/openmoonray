@@ -82,6 +82,32 @@ add_subdirectory(moonray)
 add_subdirectory(rats)
 add_subdirectory(scripts)
 
+if(IsDarwinPlatform)
+    install(CODE [[
+        set(_omr_codesign_root "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
+        execute_process(
+            COMMAND /bin/bash -c "
+                set -e
+                root=\"$1\"
+                command -v codesign >/dev/null 2>&1 || exit 0
+                for dir in \"$root/bin\" \"$root/lib\" \"$root/plugin\"; do
+                    [ -d \"$dir\" ] || continue
+                    find \"$dir\" -type f \\( -perm -111 -o -name '*.dylib' -o -name '*.so' \\) -print0
+                done | while IFS= read -r -d '' file; do
+                    if /usr/bin/file \"$file\" | /usr/bin/grep -q 'Mach-O'; then
+                        /usr/bin/codesign --force --sign - \"$file\"
+                    fi
+                done
+            "
+            _ "${_omr_codesign_root}"
+            RESULT_VARIABLE _omr_codesign_result
+        )
+        if(NOT _omr_codesign_result EQUAL 0)
+            message(FATAL_ERROR "macOS ad-hoc codesign of installed OpenMoonRay runtime failed")
+        endif()
+    ]])
+endif()
+
 if(GLD STREQUAL "$ENV{STUDIO}")
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/SDKScript
         DESTINATION .
@@ -90,4 +116,3 @@ if(GLD STREQUAL "$ENV{STUDIO}")
           GROUP_READ GROUP_WRITE
           WORLD_READ)
 endif()
-

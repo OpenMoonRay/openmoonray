@@ -92,7 +92,7 @@ set(CHAIN embree)
 
 ExternalProject_Add(OpenColorIO
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/OpenColorIO
-    GIT_TAG d1ef24cbf8021f642e42f45f50c2cd4cc77141ce # v2.2.1
+    GIT_TAG b35fb73b8674176098d3084deaa9da3d111d72d1 # v2.3.0
     INSTALL_DIR ${InstallRoot}
     CMAKE_ARGS
         -DOCIO_BUILD_APPS=OFF
@@ -205,4 +205,3 @@ ExternalProject_Add(OptiXHeaders
     DEPENDS ${CHAIN}
 )
 set(CHAIN OptiXHeaders)
-
