@@ -68,9 +68,12 @@
 	branch = main
 [submodule "moonray/render_profile_viewer"]
 	path = moonray/render_profile_viewer
-	url = ../render_profile_viewer.git
+	url = ../render_profile_viewer
 	branch = main
 [submodule "rats"]
 	path = rats
 	url = ../rats
 	branch = main
+[submodule "moonray/materialx_shaders"]
+	path = moonray/materialx_shaders
+	url = ../materialx_shaders
