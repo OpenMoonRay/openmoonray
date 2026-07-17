@@ -46,6 +46,8 @@ if(ABI_SET_VERSION)
     set(ABI_VERSION "6" CACHE STRING "If ABI_SET_VERSION is on, which version to set")
 endif()
 
+option(BUILD_MATERIALX_SHADERS "Whether or not to build MaterialX map shaders" OFF)
+
 # ================================================
 # Build Type
 # ================================================
