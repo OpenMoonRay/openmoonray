@@ -61,9 +61,7 @@ ExternalProject_Add(Blosc
 set(CHAIN Blosc)
 
 ExternalProject_Add(Boost
-    URL https://archives.boost.io/release/1.78.0/source/boost_1_78_0.tar.gz
-        https://downloads.sourceforge.net/project/boost/boost/1.78.0/boost_1_78_0.tar.gz
-    URL_HASH SHA256=94ced8b72956591c4775ae2207a9763d3600b30d9d7446562c552f0a14a63be7
+    URL https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.gz
     UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot} --with-libraries=python,filesystem,system,thread,regex,date_time,chrono,program_options,iostreams --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
     CONFIGURE_COMMAND ""
     PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch || true
@@ -361,9 +359,7 @@ if(NOT NO_USD)
 endif()
 
 ExternalProject_Add(libuuid
-    URL https://downloads.sourceforge.net/project/libuuid/libuuid-1.0.3.tar.gz
-        https://sourceforge.net/projects/libuuid/files/libuuid-1.0.3.tar.gz/download
-    URL_HASH SHA256=46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644
+    URL https://sourceforge.net/projects/libuuid/files/libuuid-1.0.3.tar.gz/download
     # prevent make from regenerating autotools files (requires automake), as for CppUnit above
     PATCH_COMMAND bash -c "touch aclocal.m4 && find . -name '*.in' -exec touch {} + && touch configure"
     CONFIGURE_COMMAND ./configure --prefix=${InstallRoot}
@@ -391,8 +387,6 @@ set(CHAIN OpenSSL)
 
 ExternalProject_Add(libcurl
     URL https://curl.se/download/curl-7.88.1.tar.gz
-        https://github.com/curl/curl/releases/download/curl-7_88_1/curl-7.88.1.tar.gz
-    URL_HASH SHA256=cdb38b72e36bc5d33d5b8810f8018ece1baa29a8f215b4495e495ded82bbf3c7
     # prevent make from regenerating autotools files (requires automake), as for CppUnit above
     PATCH_COMMAND bash -c "touch aclocal.m4 && find . -name '*.in' -exec touch {} + && touch configure"
     CONFIGURE_COMMAND ./configure --prefix=${InstallRoot} --with-secure-transport
@@ -411,9 +405,9 @@ ExternalProject_Add(FreeType
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
-        -DFT_REQUIRE_ZLIB=FALSE
-        -DFT_REQUIRE_BZIP2=FALSE
-        -DBUILD_SHARED_LIBS=true
+        -D FT_REQUIRE_ZLIB=FALSE
+        -D FT_REQUIRE_BZIP2=FALSE
+        -D BUILD_SHARED_LIBS=true
     DEPENDS ${CHAIN}
 )
 set(CHAIN FreeType)
