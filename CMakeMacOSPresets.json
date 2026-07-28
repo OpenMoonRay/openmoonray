@@ -28,6 +28,7 @@
                 "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}",
                 "CMAKE_IGNORE_PATH": "/opt/homebrew",
                 "CMAKE_IGNORE_PREFIX_PATH": "/opt/homebrew",
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
                 "Python_EXECUTABLE": "/usr/bin/python3"
             }
         },
