@@ -1,8 +1,6 @@
-Only in Boost-prefix-mod/src/Boost: b2
-Only in Boost-prefix-mod/src/Boost: bin.v2
 diff -ru Boost-prefix/src/Boost/boost/mpl/aux_/integral_wrapper.hpp Boost-prefix-mod/src/Boost/boost/mpl/aux_/integral_wrapper.hpp
---- Boost-prefix/src/Boost/boost/mpl/aux_/integral_wrapper.hpp	2025-10-19 16:45:55
-+++ Boost-prefix-mod/src/Boost/boost/mpl/aux_/integral_wrapper.hpp	2025-10-19 16:37:32
+--- Boost-prefix/src/Boost/boost/mpl/aux_/integral_wrapper.hpp	2026-07-16 20:54:37
++++ Boost-prefix-mod/src/Boost/boost/mpl/aux_/integral_wrapper.hpp	2026-07-16 20:54:03
 @@ -13,6 +13,11 @@
  
  // NO INCLUDE GUARDS, THE HEADER IS INTENDED FOR MULTIPLE INCLUSION!
@@ -15,8 +13,17 @@ diff -ru Boost-prefix/src/Boost/boost/mpl/aux_/integral_wrapper.hpp Boost-prefix
  #include <boost/mpl/integral_c_tag.hpp>
  #include <boost/mpl/aux_/static_cast.hpp>
  #include <boost/mpl/aux_/nttp_decl.hpp>
-Only in Boost-prefix-mod/src/Boost: project-config.jam
-Only in Boost-prefix-mod/src/Boost/tools/build/src/engine: b2
-Only in Boost-prefix-mod/src/Boost/tools/build/src/engine: bjam
-Only in Boost-prefix-mod/src/Boost-stamp: Boost-configure
-Only in Boost-prefix-mod/src/Boost-stamp: Boost-patch
+@@ -68,6 +73,13 @@
+     || (BOOST_WORKAROUND(__HP_aCC, <= 53800) && (BOOST_WORKAROUND(__hpxstd98, != 1)))
+     typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (N + 1)) ) next;
+     typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (N - 1)) ) prior;
++#elif defined(__clang__)
++    // clang rejects out-of-range enum conversions in constant expressions
++    // (a hard error since clang 20 that pragmas cannot suppress), so keep
++    // enum-typed wrappers at their current value: next/prior arithmetic is
++    // only meaningful for integral value types.
++    typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (__is_enum(AUX_WRAPPER_VALUE_TYPE) ? value : value + 1)) ) next;
++    typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (__is_enum(AUX_WRAPPER_VALUE_TYPE) ? value : value - 1)) ) prior;
+ #else
+     typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (value + 1)) ) next;
+     typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (value - 1)) ) prior;

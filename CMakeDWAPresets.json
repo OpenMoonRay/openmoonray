@@ -24,7 +24,12 @@
                 "OIIO_PYTHON"                   : "$env{DEPS_ROOT}/lib/python3.9/site-packages"
             },
             "cacheVariables": {
-                "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}"
+                "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}",
+                "BUILD_MATERIALX_SHADERS": "ON",
+                "CMAKE_IGNORE_PATH": "/opt/homebrew",
+                "CMAKE_IGNORE_PREFIX_PATH": "/opt/homebrew",
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
+                "Python_EXECUTABLE": "/usr/bin/python3"
             }
         },
         {

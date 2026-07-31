@@ -5,11 +5,14 @@ Start with reading the [general build instructions](../general_build).
 ---
 ## Base Requirements
 - Apple M-series hardware
-- macOS 14.6 Sonoma / Xcode 15.4
-- macOS 15.6 Sequoia / Xcode 16.4
-- macOS 26.0.Tahoe / Xcode 26.0
+    - macOS 14.6 Sonoma / Xcode 15.4
+    - macOS 15.6 Sequoia / Xcode 16.4
+    - macOS 26.0.Tahoe / Xcode 26.0
+    - macOS 26.5 Tahoe / Xcode 26.6
+- 17+ GB Disk Space
 - Install Xcode
-- Tahoe requires an additional component:  xcodebuild -downloadComponent MetalToolchain
+- Tahoe requires an additional component: `xcodebuild -downloadComponent MetalToolchain`
+- `/usr/bin/python3` must be the internal macOS Python 3.9 shim (this is default with an Xcode install)
 - Git and [Git LFS](https://git-lfs.com/)
 - Download and install CMake 3.26.5 (or greater):
     https://github.com/Kitware/CMake/releases/download/v3.26.5/cmake-3.26.5-macos-universal.dmg
