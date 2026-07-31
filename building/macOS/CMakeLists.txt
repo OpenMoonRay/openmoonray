@@ -405,9 +405,9 @@ ExternalProject_Add(FreeType
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
-        -D FT_REQUIRE_ZLIB=FALSE
-        -D FT_REQUIRE_BZIP2=FALSE
-        -D BUILD_SHARED_LIBS=true
+        -DFT_REQUIRE_ZLIB=FALSE
+        -DFT_REQUIRE_BZIP2=FALSE
+        -DBUILD_SHARED_LIBS=true
     DEPENDS ${CHAIN}
 )
 set(CHAIN FreeType)
