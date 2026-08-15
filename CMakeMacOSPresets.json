@@ -26,6 +26,7 @@
             },
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}",
+                "CMAKE_CXX_FLAGS": "-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -I${sourceParentDir}/building/macOS/houdini-usd-fixes",
                 "CMAKE_IGNORE_PATH": "/opt/homebrew",
                 "CMAKE_IGNORE_PREFIX_PATH": "/opt/homebrew",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
