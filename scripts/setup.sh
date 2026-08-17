@@ -11,6 +11,12 @@ install_root=${omr_root}
 while [ "$(basename ${install_root})" != "installs" ]
 do
     install_root=$(dirname ${install_root})
+
+    if [ "${install_root}" == "/" ]
+    then
+        echo "Could not find install root. Be sure you are running this script from the installed location."
+        exit 1
+    fi
 done
 
 echo "Found install root at ${install_root}"

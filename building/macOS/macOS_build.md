@@ -48,6 +48,8 @@ Note: If building for Houdini, you'll potentially need to make the following cha
 * Edit source/openmoonray/scripts/macOS/setupHoudini.sh to update HOUDINI_PATH
 * Edit source/openmoonray/building/macOS/pxr-houdini/pxrTargets.cmake to update HPYTHONLIB and HPYTHONINC if needed
 
+Houdini 20 is officially supported.
+
 ---
 ### Step 4. Build the dependencies
 Note: If building for Houdini you'll need to build moonray against Houdini's USD libraries.
@@ -82,7 +84,7 @@ moonray_gui -exec_mode xpu -info -in curves.rdla
 HOUDINI:
 Open "Houdini Terminal" in Applications and run:
 ```bash
-source /Applications/MoonRay/openmoonray/scripts/macOS/setupHoudini.sh
+source /Applications/MoonRay/installs/openmoonray/scripts/macOS/setupHoudini.sh
 houdini
 ```
 
