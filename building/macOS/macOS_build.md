@@ -53,10 +53,10 @@ Houdini 20 is officially supported.
 ---
 ### Step 4. Build the dependencies
 Note: If building for Houdini you'll need to build moonray against Houdini's USD libraries.
-You'll want to skip building USD during this step by adding `-DNOUSD=1` to the first cmake
+You'll want to skip building USD during this step by adding `-DNO_USD=1` to the first cmake
 command below: `cmake -DNO_USD=1 ../building/macOS`.  You should clean
 the build-deps/ and installs/ directory if you have previously installed the dependencies
-without passing -DNOUSD=1, to remove any USD related files or step 5 may fail to link to
+without passing -DNO_USD=1, to remove any USD related files or step 5 may fail to link to
 Houdini's USD libs.
 ```bash
 cd /Applications/MoonRay/build-deps
