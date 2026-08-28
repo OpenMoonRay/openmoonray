@@ -77,3 +77,4 @@
 [submodule "moonray/materialx_shaders"]
 	path = moonray/materialx_shaders
 	url = ../materialx_shaders
+	branch = main
