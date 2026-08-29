@@ -61,13 +61,14 @@ ExternalProject_Add(Blosc
 set(CHAIN Blosc)
 
 ExternalProject_Add(Boost
-    URL https://archives.boost.io/release/1.78.0/source/boost_1_78_0.tar.gz
-        https://downloads.sourceforge.net/project/boost/boost/1.78.0/boost_1_78_0.tar.gz
-    URL_HASH SHA256=94ced8b72956591c4775ae2207a9763d3600b30d9d7446562c552f0a14a63be7
-    UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot} --with-libraries=python,filesystem,system,thread,regex,date_time,chrono,program_options,iostreams --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
+    URL https://archives.boost.io/release/1.85.0/source/boost_1_85_0.tar.gz
+        https://downloads.sourceforge.net/project/boost/boost/1.85.0/boost_1_85_0.tar.gz
+    URL_HASH SHA256=be0d91732d5b0cc6fbb275c7939974457e79b54d6f07ce2e3dfdd68bef883b0b
+    UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot} --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
     CONFIGURE_COMMAND ""
     PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch || true
-    BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam variant=release link=shared threading=multi define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
+        COMMAND /usr/bin/perl -0pi -e "s/boost-install boost_python boost_numpy/boost-install boost_python/" libs/python/build/Jamfile
+    BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam --with-python --with-iostreams --with-atomic --with-chrono --with-date_time --with-filesystem --with-program_options --with-regex --with-system --with-thread variant=release link=shared threading=multi architecture=arm address-model=64 define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
     DEPENDS ${CHAIN}
@@ -112,7 +113,7 @@ set(CHAIN MicroHttpd)
 
 ExternalProject_Add(OpenSubdiv
     GIT_REPOSITORY https://github.com/PixarAnimationStudios/OpenSubdiv
-    GIT_TAG 8ffa2b6566be10209529d7a0d1db02a0796b160c # v3_5_0
+    GIT_TAG d303eb5071fd3ce148e37d8f7fcd8f212143fe1a # v3_6_0
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
@@ -123,41 +124,67 @@ ExternalProject_Add(OpenSubdiv
 )
 set(CHAIN OpenSubdiv)
 
-ExternalProject_Add(OpenEXR
-    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr
-    GIT_TAG 8bc3741131db146ad08a5b83af9e6e48f0e94a03 # v2.5.7
-    PATCH_COMMAND patch IlmBase/Half/CMakeLists.txt ${THIS_DIR}/../Imath_include_paths.patch
+ExternalProject_Add(Imath
+    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/Imath
+    GIT_TAG c0396a055a01bc537d32f435aee11a9b7ed6f0b5 # v3.1.12
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
-        -DBoost_ROOT=${InstallRoot}
-        -DBUILD_SHARED_LIBS=OFF
+        -DCMAKE_BUILD_TYPE=Release
+        -DBUILD_TESTING=OFF
+        -DIMATH_INSTALL_PKG_CONFIG=ON
+    DEPENDS ${CHAIN}
+)
+set(CHAIN Imath)
+
+ExternalProject_Add(OpenEXR
+    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr
+    GIT_TAG 55d1a1404cec5b4b187009d9f7fe55a5622ac4e5 # v3.3.2
+    BUILD_COMMAND make ${JOBS_ARG}
+    CMAKE_ARGS
+        ${COMMON_CMAKE_ARGS}
+        -DImath_ROOT=${InstallRoot}
+        -DImath_DIR=${InstallRoot}/lib/cmake/Imath
+        -DCMAKE_BUILD_TYPE=Release
+        -DBUILD_SHARED_LIBS=ON
+        -DOPENEXR_BUILD_TOOLS=OFF
+        -DOPENEXR_BUILD_EXAMPLES=OFF
+        -DOPENEXR_BUILD_TESTS=OFF
+        -DOPENEXR_BUILD_PYTHON=OFF
+        -DOPENEXR_INSTALL_EXAMPLES=OFF
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenEXR)
 
 ExternalProject_Add(TBB
-    URL https://github.com/oneapi-src/oneTBB/archive/2020_U3.tar.gz
-    URL_HASH SHA256=2103cc6238c935664f87680618f6684d57501d4a2fa8ea8f6c97ad6ff7dc722a
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND make ${JOBS_ARG} arch=arm64
-    INSTALL_COMMAND bash -c "cp build/*_release/libtbb*.* ${InstallRoot}/lib"
-            COMMAND bash -c "cp -r include/tbb ${InstallRoot}/include"
+    GIT_REPOSITORY https://github.com/oneapi-src/oneTBB.git
+    GIT_TAG 45587e94dfb6dfe00220c5f520020a5bc745e92f # v2022.1.0
+    BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --config Release --parallel ${N}
+    INSTALL_COMMAND ${CMAKE_COMMAND} --install <BINARY_DIR> --config Release
+    CMAKE_ARGS
+        ${COMMON_CMAKE_ARGS}
+        -DCMAKE_BUILD_TYPE=Release
+        -DTBB_TEST=OFF
+        -DTBB_EXAMPLES=OFF
+        -DTBB_STRICT=OFF
     DEPENDS ${CHAIN}
 )
 set(CHAIN TBB)
 
 ExternalProject_Add(OpenVDB
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openvdb
-    GIT_TAG ab935574cdb25c3df66b068fce2a3b0a74281c54 # v9.1.0
-    PATCH_COMMAND patch -p1 -N < ${THIS_DIR}/OpenVDB.patch || true
+    GIT_TAG f552aab85926ecd22abffdb0165815023c375447 # v12.0.1
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
         -DBlosc_ROOT=${InstallRoot}
         -DBoost_ROOT=${InstallRoot}
         -DTBB_ROOT=${InstallRoot}
+        -DCMAKE_BUILD_TYPE=Release
+        -DOPENVDB_BUILD_BINARIES=OFF
+        -DOPENVDB_BUILD_UNITTESTS=OFF
+        -DOPENVDB_BUILD_PYTHON_MODULE=OFF
+        -DOPENVDB_BUILD_NANOVDB=OFF
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenVDB)
@@ -233,7 +260,7 @@ set(CHAIN embree)
 
 ExternalProject_Add(OpenColorIO
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/OpenColorIO
-    GIT_TAG 056b7b0cb0d087961e9dba75104820e44faf52a1 # v2.0.2
+    GIT_TAG ebd076ae6c4362d089edfbc63d8fbf3d7538ea01 # v2.4.1
     BUILD_COMMAND ${CMAKE_COMMAND} -E env ${POLICY_MIN_ENV} make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
@@ -286,18 +313,30 @@ set(CHAIN pybind11)
 
 ExternalProject_Add(OpenImageIO
     GIT_REPOSITORY https://github.com/OpenImageIO/oiio
-    GIT_TAG 331a323468928c8017ad048b26d47c4e57a724a7 # 2.3.20.0
+    GIT_TAG 372c57696909513a8ea97180cb34b925c4fe09e3 # v2.5.18.0
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
         -DBoost_ROOT=${InstallRoot}
         -DIMath_ROOT=${InstallRoot}
+        -DImath_DIR=${InstallRoot}/lib/cmake/Imath
         -DDISABLE_CMAKE_SEARCH_PATHS=TRUE
         -DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH=TRUE
         -DOpenEXR_ROOT=${InstallRoot}
+        -DOpenEXR_DIR=${InstallRoot}/lib/cmake/OpenEXR
+        -DOpenColorIO_ROOT=${InstallRoot}
+        -DTBB_ROOT=${InstallRoot}
+        -DCMAKE_BUILD_TYPE=Release
         -DUSE_QT=0
         -DUSE_PYTHON=1
         -DPython_EXECUTABLE=/usr/bin/python3
+        -DUSE_OPENVDB=0
+        -DUSE_FFMPEG=0
+        -DUSE_OPENCV=0
+        -DUSE_WEBP=0
+        -DUSE_DCMTK=0
+        -DUSE_OPENJPEG=0
+        -DUSE_TESTS=0
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenImageIO)
@@ -307,7 +346,7 @@ ExternalProject_Add(OpenImageDenoise
    URL_HASH SHA256=16cdaddabeb0f2af22fc8e466317c1a14a54b6ec03db2ac343e17fad40c70f3f
    BUILD_COMMAND ""
    CONFIGURE_COMMAND ""
-   INSTALL_COMMAND bash -c "rm -f ../OpenImageDenoise/lib/libtbb.dylib"
+   INSTALL_COMMAND bash -c "rm -f ../OpenImageDenoise/lib/libtbb*.dylib"
            COMMAND bash -c "ditto ../OpenImageDenoise ${InstallRoot}"
    DEPENDS ${CHAIN}
 )
@@ -432,4 +471,3 @@ ExternalProject_Add(GLFW
     DEPENDS ${CHAIN}
 )
 set(CHAIN GLFW)
-
