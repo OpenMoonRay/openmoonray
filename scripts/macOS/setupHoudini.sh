@@ -1,6 +1,6 @@
 omr_install_dir=/Applications/MoonRay/installs/openmoonray
 
-# save/restore PYTHONPATH, since Houdini seems to reject python3.9
+# save/restore PYTHONPATH, since Houdini supplies its own Python runtime
 OLDPP=${PYTHONPATH}
 source ${omr_install_dir}/scripts/setup.sh
 export PYTHONPATH=${OLDPP}
