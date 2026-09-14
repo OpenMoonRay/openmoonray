@@ -118,16 +118,6 @@ set_target_properties(sdf PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS sdf )
 list(APPEND _IMPORT_CHECK_FILES_FOR_sdf "${_LIB_PREFIX}/libpxr_sdf.dylib" )
 
-# Import target "ndr" for configuration "Release"
-set_property(TARGET ndr APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(ndr PROPERTIES
-  IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_ndr.dylib"
-  IMPORTED_SONAME_RELEASE "libpxr_ndr.dylib"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS ndr )
-list(APPEND _IMPORT_CHECK_FILES_FOR_ndr "${_LIB_PREFIX}/libpxr_ndr.dylib" )
-
 # Import target "sdr" for configuration "Release"
 set_property(TARGET sdr APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(sdr PROPERTIES
@@ -379,6 +369,23 @@ list(APPEND _IMPORT_CHECK_TARGETS hd )
 list(APPEND _IMPORT_CHECK_FILES_FOR_hd "${_LIB_PREFIX}/libpxr_hd.dylib" )
 
 # Import target "hdSt" for configuration "Release"
+set_property(TARGET hdsi APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(hdsi PROPERTIES
+  IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_hdsi.dylib"
+  IMPORTED_SONAME_RELEASE "libpxr_hdsi.dylib"
+  )
+list(APPEND _IMPORT_CHECK_TARGETS hdsi )
+list(APPEND _IMPORT_CHECK_FILES_FOR_hdsi "${_LIB_PREFIX}/libpxr_hdsi.dylib" )
+
+set_property(TARGET hdMtlx APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(hdMtlx PROPERTIES
+  IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_hdMtlx.dylib"
+  IMPORTED_SONAME_RELEASE "libpxr_hdMtlx.dylib"
+  )
+list(APPEND _IMPORT_CHECK_TARGETS hdMtlx )
+list(APPEND _IMPORT_CHECK_FILES_FOR_hdMtlx "${_LIB_PREFIX}/libpxr_hdMtlx.dylib" )
+
+# Import target "hdSt" for configuration "Release"
 set_property(TARGET hdSt APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(hdSt PROPERTIES
   IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_hdSt.dylib"
@@ -399,6 +406,15 @@ list(APPEND _IMPORT_CHECK_TARGETS hdx )
 list(APPEND _IMPORT_CHECK_FILES_FOR_hdx "${_LIB_PREFIX}/libpxr_hdx.dylib" )
 
 # Import target "usdImaging" for configuration "Release"
+set_property(TARGET usdMtlx APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(usdMtlx PROPERTIES
+  IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_usdMtlx.dylib"
+  IMPORTED_SONAME_RELEASE "libpxr_usdMtlx.dylib"
+  )
+list(APPEND _IMPORT_CHECK_TARGETS usdMtlx )
+list(APPEND _IMPORT_CHECK_FILES_FOR_usdMtlx "${_LIB_PREFIX}/libpxr_usdMtlx.dylib" )
+
+# Import target "usdImaging" for configuration "Release"
 set_property(TARGET usdImaging APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(usdImaging PROPERTIES
   IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_usdImaging.dylib"
@@ -417,16 +433,6 @@ set_target_properties(usdImagingGL PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS usdImagingGL )
 list(APPEND _IMPORT_CHECK_FILES_FOR_usdImagingGL "${_LIB_PREFIX}/libpxr_usdImagingGL.dylib" )
-
-# Import target "usdRiImaging" for configuration "Release"
-set_property(TARGET usdRiImaging APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(usdRiImaging PROPERTIES
-  IMPORTED_LOCATION_RELEASE "${_LIB_PREFIX}/libpxr_usdRiImaging.dylib"
-  IMPORTED_SONAME_RELEASE "libpxr_usdRiImaging.dylib"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS usdRiImaging )
-list(APPEND _IMPORT_CHECK_FILES_FOR_usdRiImaging "${_LIB_PREFIX}/libpxr_usdRiImaging.dylib" )
 
 # Import target "usdSkelImaging" for configuration "Release"
 set_property(TARGET usdSkelImaging APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
