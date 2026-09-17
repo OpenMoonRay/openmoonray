@@ -161,6 +161,51 @@ and deferred-MCRT queue workarounds were tested and reverted after transport
 and render-pass tracing identified the actual causes. Investigation-only frame
 and queue logging was also removed from the final state.
 
+### Timeline animation updates (Houdini 22.0.440)
+
+The subsequent timeline fix is recorded in hdMoonray commit `930e5b2`, pinned
+by superproject commit `5335e20`. This validation used Houdini 22.0.440 rather
+than the original 22.0.408 build described elsewhere in this document.
+
+The baseline trace identified an attribute type mismatch during animated
+points synchronization: `vertex_list_0` expected `Vec3fVector` but received
+`Vec3f`. In `HdMoonray_GeometryBase::setVec3fPrimvarMb()` in
+`lib/hydramoonray/primvars.cc`, both motion samples were incorrectly assigned
+their first vertex instead of the complete array. The caught exception left
+previous geometry in place, explaining why the viewport stayed on an earlier
+animation frame even though scene synchronization occurred.
+
+The minimal fix passes `firstSample` and `secondSample` directly to the two
+RDL attributes. It does not change AOVs, convergence, final-image presentation,
+viewport/product classification, Arras sessions, or the transport protocol.
+No generation-lifecycle architecture or full-snapshot workaround is included.
+Temporary diagnostic instrumentation was removed before committing.
+
+With `BUILD_TESTING=ON`, run the focused regression and shading tests from the
+build directory using the configured Houdini runtime library environment:
+
+```bash
+ctest -R '^(hdmoonray_primvar_sampling|moonray_rendering_shading_tests)$' --output-on-failure
+```
+
+The regression exercises the production points dispatch for `1 -> 10 -> 1`,
+verifies every vertex in both motion samples, and checks empty arrays. It
+fails against the previous implementation; both tests pass with the fix.
+
+Validation used the installed normal Arras-backed **Moonray** delegate, not
+**Moonray (debug)**:
+
+- `1 -> 10 -> 1` and rapid scrubbing followed by a settled frame update geometry;
+- selecting the same frame again does not restart rendering;
+- a reversible light exposure edit updates IPR;
+- a representative installed-delegate USD render produces non-black pixels;
+- the test-created MCRT process exits after delegate teardown.
+
+The Houdini project was not saved, the temporary light edit was undone, and
+the original frame was restored. Only the shared Hydra library, normal plugin,
+and regression target needed rebuilding; Houdini was restarted to load the
+installed binaries. A documentation-only update requires no rebuild.
+
 ## Clean build procedure
 
 The paths below match the checked-in validation preset. Change the Houdini
