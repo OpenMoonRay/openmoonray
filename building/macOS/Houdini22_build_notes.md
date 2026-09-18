@@ -206,6 +206,64 @@ the original frame was restored. Only the shared Hydra library, normal plugin,
 and regression target needed rebuilding; Houdini was restarted to load the
 installed binaries. A documentation-only update requires no rebuild.
 
+### Lighting update fix (Houdini 22.0.440)
+
+Implemented in hdMoonray commit `9fdd0be` and validated on 2026-09-18.
+
+The lighting-variations project exposed two update hazards independently of
+AOV definitions. A focused regression reproduces the first against the
+baseline: after final-image completion is cached, `IsConverged()` still returns
+true when a subsequent scene edit is pending. The pending-update check now
+precedes both completion shortcuts, clears their cached state, and returns
+false so Hydra can execute and submit the edit. The two-query final-image
+presentation workaround is retained.
+
+The baseline rig-switch trace also shows replacement lights synchronizing and
+an Arras delta being submitted without subsequent geometry synchronization.
+Geometry's category tokens can remain unchanged while their light membership
+changes, leaving Layer assignments pointing at disabled lights. Membership
+changes are now recorded under the category mutex and consumed once before
+render submission. Existing geometry/part assignments are refreshed from
+current categories on both Hydra paths, without forcing geometry rebuilds or
+session recreation. Duplicate category registrations do not trigger refreshes.
+
+Regression coverage checks pending edits after convergence, repeated queries,
+new-frame completion and final presentation, and actual Layer LightSets through
+an A/B/A light replacement. Run:
+
+```bash
+ctest -R '^(hdmoonray_renderpass_convergence|hdmoonray_primvar_sampling|moonray_rendering_shading_tests)$' --output-on-failure
+```
+
+These tests pass against the installed build. The normal Arras delegate also
+produces non-black pixels for the representative two-triangle USD and its test
+computation exits. A preliminary path-specific refresh still produced a black
+rig-switch capture, so the final refresh handles both Hydra paths.
+
+Final live acceptance used normal **Moonray** in a fresh Houdini Indie 22.0.440
+process with the lighting-variations project. Native viewport screenshots
+confirmed visible updates for exposure, intensity, color and transform edits,
+the `0 -> 4 -> 0` return switch, and rapid `4 -> 2 -> 4 -> 0` switching. The
+trace recorded eleven updates over one Arras connection, using the same MCRT
+process throughout; the count remained unchanged while the scene was idle.
+After restoring every tested parameter (including its expression/keyframes)
+and the original frame, the validation process was closed without saving the
+project and its MCRT child exited. The existing window's unsaved edits were
+left intact and its temporary renderer pause was restored.
+
+The project has an additional artist-facing trap: `WINDOW_KEY` exposure uses
+`10 + ch("../CTRL_LIGHTING_LOOK/exposure_trim")`. Numeric edits that leave this
+expression in place do not change its evaluated exposure. Change the controller
+trim, or deliberately replace the expression, before diagnosing such an edit
+as renderer staleness. Acceptance changed the evaluated values and restored
+the original expressions afterward.
+
+No visibility-only patch was made without a demonstrated failure. Public
+settings, AOVs, transport and color management remain unchanged. Both plugins
+were rebuilt for the internal delegate-layout change, but **Moonray (Debug)**
+was not used for acceptance. Restart existing Houdini processes after install;
+they retain the previously loaded library until exit.
+
 ## Clean build procedure
 
 The paths below match the checked-in validation preset. Change the Houdini
