@@ -3,7 +3,8 @@
 This document records the changes and validation performed on the
 `test/houdini22-clean-build` branch. The work started from
 `OpenMoonRay/openmoonray` `main` at `b9b0ac2` and targets Houdini 22.0.408 on
-Apple Silicon.
+Apple Silicon. Later sections explicitly identify follow-up validation on
+Houdini 22.0.440; those results do not replace the original build baseline.
 
 This is a validation branch, not a statement of upstream support for every
 Houdini 22 production workflow.
@@ -141,6 +142,147 @@ Render Geometry already exposes MoonRay mesh tessellation controls in
 before editing **Mesh Resolution** or **Adaptive Error**; their default
 **Do Nothing** mode intentionally leaves existing scene-authored primvars
 untouched.
+
+### MoonRay RenderVars and Hydra AOVs (Houdini 22.0.440)
+
+The DCC integration now contains one **MoonRay RenderVars** Solaris HDA,
+`DW_MOONRAY::moonrayrendervars::1`, with grouped AOV toggles. The asset authors
+standard USD RenderVars through standard Render Var LOPs, with native MoonRay
+overrides. Its default root is `/Render/Vars`; all built-in outputs start
+disabled. This work adds no custom ROP or render-settings HDA and no
+DisplayFilter graph construction.
+
+The authoring contract follows [PR #228](https://github.com/OpenMoonRay/openmoonray/pull/228),
+while transport validation uses the current H22 Hydra scene-index delegate.
+Beauty remains `sourceName=color`, `dataType=color4f`, and
+`driver:parameters:aov:format=color4f`. Its float RGBA buffer format is fixed
+to avoid the earlier RGB packing failure. Native result and expression fields
+are authored explicitly as `parameters:moonray:*`, rather than assuming the
+current delegate recognizes every preset alias.
+
+Presets include beauty, alpha, depth, Z, N, Ng, P, Wp, St, weight, state-variable
+derivatives, motion vectors, heatmap, wireframe, denoise albedo/normal, and
+material albedo/emission/normal/roughness/PBR validity/color/matte. `Z` selects
+the native camera-distance state variable; `depth` uses Hydra depth semantics.
+There is no user-facing `cameraDepth` preset. Custom entries support primitive
+attributes, material expressions, LPEs, visibility and Extra AOV user events.
+Names must be valid unique USD identifiers and required expressions must be
+present. Outputs use float precision and native default math filters; tested
+RGB/XYZ outputs also offer half precision.
+
+**Set Up AOV Preview** optionally creates or reuses a separate branch of standard
+Render Product, Render Settings and Configure Layer LOPs. The product is raster;
+its live RenderVar list puts enabled beauty first, then the remaining variables
+by path. Configure Layer activates the settings, and the button displays the
+final node and selects the production MoonRay delegate in available Solaris
+viewers. It creates no output destination or render launcher. Re-running the
+button updates the generated branch without replacing other downstream nodes.
+Disk rendering continues to use standard products and the USD Render ROP/husk.
+
+The delegate declares `aovsupport=true`. A narrow render-pass fix keeps clients
+with explicit AOV bindings on the existing buffer route, even with active
+Render Settings. Previously, husk saved its unfilled buffers over MoonRay's
+direct product image. Batch buffer rendering also applies the active MoonRay
+settings, including deep-ID configuration.
+
+The H22 compatibility layer also carries the narrowly scoped conversions proven
+by the earlier AOV work. `SdfAssetPath` values convert to every MoonRay string
+attribute, using the resolved path when available and the authored path as a
+fallback. Token and string ramp interpolation values convert to MoonRay's
+`IntVector` representation; Houdini spellings such as `hermite`, `smoothstep`,
+`bezier` and B-spline map to the supported smooth mode. Default `AttributeMap`
+requests named `P` and `N` select MoonRay's built-in position and shading-normal
+modes, while an explicitly authored `map_type` is preserved. Invalid shader
+connections remain errors.
+
+Hydra display refinement now affects MoonRay `mesh_resolution` only for
+subdivision surfaces. Polygon meshes, including subdivision scheme `none`, use
+resolution 1 unless `moonray:mesh_resolution` is explicitly authored. This
+prevents a high global refine level from expanding an already dense displaced
+polygon mesh into an unbounded tessellation while preserving artist overrides.
+
+MaterialX shader DSOs need a platform-specific install RPATH on macOS. They now
+use `@loader_path` and `@loader_path/../lib`; Linux retains `$ORIGIN`. This lets
+installed `ND_texcoord_vector2` and `ND_image_vector3` DSOs locate the sibling
+`libmoonray_mtlx_map.dylib`.
+
+Arras `stopped`/`stopping` status and exhausted connection retries now mark a
+failed frame complete, clear the active update and preserve the stop reason.
+Hydra therefore ends its convergence wait instead of leaving husk idle at low
+CPU. Houdini 22.0.440 does not propagate this as a nonzero husk exit status and
+can write a small empty EXR, so validation must inspect the log and pixels.
+
+| Check | Classification | Evidence / limit |
+| --- | --- | --- |
+| HDA authoring | PROVEN | Preset toggles, root changes, duplicate names, missing expressions, custom entries and save/reopen checked. |
+| Preview setup and ordering | PROVEN / OBSERVED | Standard USD product/settings relationships, beauty-first ordering, repeated clicks and recooks pass automated checks. User confirmed the live AOV menu works; the final beauty-first GUI order remains unconfirmed. |
+| Production Hydra render/readback | PROVEN for tested outputs | Individual and combined fixtures exercised `HdMoonrayRendererPlugin`; a combined 38-part EXR contains scene-dependent native, material, denoise and custom outputs. Copernicus reads all layers and their expected component counts. |
+| Numerical values | PROVEN for fixture | Custom scalar attribute is exactly 0.375; emission retains linear values 0.1/0.02/0.01; safe RGB/XYZ half outputs match float within tested tolerance. |
+| Render completion | OBSERVED | Of 40 fixtures, 30 exit cleanly, 8 abort during shutdown after writing filled EXRs, and 2 auxiliary-only fixtures crash without an EXR. Written pixels do not classify aborts as clean passes. |
+| Renderer failure termination | PROVEN / constrained | A production-scene MCRT crash ends the wait in about 22 seconds and reports `Arras session stopped: ... signal 11`; husk still returns zero and writes an empty EXR. |
+| Saved production scene | PROVEN output / shutdown constrained | Without scene edits, the 1,046,074-triangle displaced polygon mesh renders a finite 40x23 RGBA EXR. The generated RDL uses `mesh_resolution=1`; the previous refine-level value 256 caused a vector-length failure and downstream MCRT crash. The known post-output `Pure virtual function called` shutdown abort remains. |
+| Cryptomatte / adaptive auxiliary outputs | UNSUPPORTED in tested buffer route | Cryptomatte is zero with no usable coverage/manifest; auxiliary outputs are zero in the combined fixture and crash alone. |
+| Material radius / factor | EXPERIMENTAL | Radius is zero without a subsurface proof scene. Factor is finite and nonzero (fixture maximum 3.8276417), but has no known reference result. |
+
+Scalar/UV and wireframe half readback produced corruption or NaNs in this runtime.
+Their presets stay float, and custom scalar/UV half requests produce a node error.
+This is distinct from the historical ARM half-conversion fix already present in
+the source; the precise loss point is not established. The unrestricted-half
+reproducer and render/EXR logs are retained under
+`runtime-fixtures/moonray_rendervars`. Shutdown failures report
+`Pure virtual function called` and remain unresolved.
+
+Cryptomatte, beauty/alpha auxiliary and material radius/factor controls are
+explicitly labeled **Experimental** and remain disabled by default. They are
+available for investigation, not production-supported outputs. Promotion requires
+clean individual and combined production Hydra renders, correct component and
+channel readback, and Solaris toggle/recook/save/reopen checks. Cryptomatte also
+needs usable ID coverage, manifest metadata and compositor extraction; auxiliary
+outputs need a generating adaptive-buffer fixture and resolution of their
+crashes; radius/factor need known nonzero material proof scenes. These criteria
+are recorded in the node guide linked below. Marking these controls experimental
+does not resolve the separate renderer shutdown failures.
+
+Implementation lives in `moonray/moonray_dcc_plugins/scripts/build_moonray_rendervars.py`
+and `houdini/otls/Lop::DW_MOONRAY::moonrayrendervars::1.hda` within that submodule.
+The generator embeds its PythonModule and requires no Arnold dependency or
+external startup module. Builds use a temporary directory to keep intermediate
+HDA backups out of the source tree. CMake installs the asset, generator and
+node-specific guide. Full preset mappings and usage are in
+[`moonray_rendervars.md`](../../moonray/moonray_dcc_plugins/houdini/docs/moonray_rendervars.md).
+
+Validation scripts in the DCC submodule's `houdini/tests` are
+`validate_moonray_rendervars.py` (authoring and USD fixtures),
+`validate_moonray_preview.py` (standard preview relationships and ordering),
+`render_moonray_rendervars.py` (production husk and OpenImageIO statistics), and
+`read_moonray_rendervars.py` (Copernicus). Existing Hydra primvar-sampling and
+render-pass compatibility/convergence checks pass (3/3).
+
+The clean-build validation environment was Houdini 22.0.440 with
+`HdMoonrayRendererPlugin` from `/Applications/MoonRay/installs/openmoonray`.
+The focused commands were:
+
+```sh
+cmake --build /Applications/MoonRay/build --target \
+  hydramoonray hd_moonray hd_moonray_debug \
+  hdmoonray_compatibility_test hdmoonray_renderpass_convergence_test \
+  hdmoonray_primvar_sampling_test -j8
+
+env \
+  DYLD_LIBRARY_PATH=/Applications/MoonRay/build/moonray/hydra/hdMoonray/lib/hydramoonray:/Applications/Houdini/Houdini22.0.440/Frameworks/Python.framework/Versions/3.13:/Applications/Houdini/Houdini22.0.440/Frameworks/Houdini.framework/Versions/Current/Libraries:/Applications/MoonRay/installs/openmoonray/lib:/Applications/MoonRay/installs/lib \
+  RDL2_DSO_PATH=/Applications/MoonRay/installs/openmoonray/rdl2dso.proxy:/Applications/MoonRay/installs/openmoonray/rdl2dso \
+  ctest --test-dir /Applications/MoonRay/build/moonray/hydra/hdMoonray/tests \
+    --output-on-failure \
+    -R '^hdmoonray_(compatibility|renderpass_convergence|primvar_sampling)$'
+
+source /Applications/MoonRay/installs/openmoonray/scripts/macOS/setupHoudini.sh
+/Applications/Houdini/Houdini22.0.440/Frameworks/Houdini.framework/Versions/Current/Resources/bin/husk \
+  -R HdMoonrayRendererPlugin --headlight none --no-mplay \
+  --make-output-path --fast-exit 1 --settings /Render/Settings -f 1 \
+  /Applications/MoonRay/runtime-fixtures/moonray_rendervars/combined.usda
+oiiotool --info -v -a \
+  /Applications/MoonRay/runtime-fixtures/moonray_rendervars/combined.exr
+```
 
 ### Arras and IPR lifecycle
 
