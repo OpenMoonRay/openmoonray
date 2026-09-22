@@ -121,13 +121,13 @@ variants = [
     [   # variant 8
         'os-rocky-9',
         'opt_level-optdebug',
-        'refplat-vfx2022.0',
-        'usd_core-0.22.5.x',
-        'openimageio-2.3.20.0.x',
-        'gcc-9.3.x.1',
-        'openvdb-9',
-        'zlib-1.2.11.x',
-        'opensubdiv-3.5.0.x.0'
+        'refplat-vfx2026.0',
+        'usd_core-0.26.5.x',
+        'usd_view-0.26.5.x',
+        'openimageio-3.1',
+        'gcc-14.2.x',
+        'openvdb-13',
+        'zlib-1.2.11.x'
     ],
 ]
 
@@ -136,14 +136,20 @@ conf_rats_variants = variants[0:2]
 # Add ephemeral package to each variant.
 for i, variant in enumerate(variants):
     variant.insert(0, '.openmoonray_variant-%d' % i)
+    if 'refplat-vfx2023.1' in variant:
+        variant.extend(['PyQt5-5.15.6', 'PyQtChart-5.15.6'])
+    elif 'refplat-vfx2026.0' in variant:
+        variant.append('PySide6-6.8.6')
+    else:
+        variant.append('PySide6-6.5.5')
 
 requires = [
     'boost',
-    'cuda-12.1.0.x',
+    'cuda-12.9.1.x',
     'curl_no_ldap-7.49.1.x',
     'embree-4.2.0.x',
     'imath-3',
-    'jsoncpp-1.9.5',
+    'jsoncpp-1.9',
     'libmicrohttpd-0.9.71.x.1',
     'log4cplus-1.1.2.x',
     'lua',
