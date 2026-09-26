@@ -1,0 +1,39 @@
+# .github/workflows/automated-snap-build.yml
+#
+# Automated snap build workflow managed by snap-dashboard.
+# Builds the snap and publishes it to the candidate channel.
+#
+# Required repository secret (auto-provisioned by the dashboard's Settings
+# page — see "Snapcraft Store Credential" — no manual setup needed):
+#   SNAPCRAFT_STORE_CREDENTIALS
+
+name: Automated Snap Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      dashboard_trigger_id:
+        description: "snap-dashboard StaleBuildTrigger ID (informational)"
+        required: false
+        type: string
+
+jobs:
+  build:
+    name: "Build and publish to candidate"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build snap
+        uses: snapcore/action-build@v1
+        id: build
+
+      - name: Publish snap to candidate
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: candidate
