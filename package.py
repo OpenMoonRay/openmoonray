@@ -129,6 +129,17 @@ variants = [
         'openvdb-13',
         'zlib-1.2.11.x'
     ],
+    [   # variant 9
+        'os-rocky-9',
+        'opt_level-optdebug',
+        'refplat-vfx2022.0',
+        'usd_core-0.22.5.x',
+        'openimageio-2.3.20.0.x',
+        'gcc-9.3.x.1',
+        'openvdb-9',
+        'zlib-1.2.11.x',
+        'opensubdiv-3.5.0.x.0'
+    ],
 ]
 
 conf_rats_variants = variants[0:2]
@@ -136,7 +147,7 @@ conf_rats_variants = variants[0:2]
 # Add ephemeral package to each variant.
 for i, variant in enumerate(variants):
     variant.insert(0, '.openmoonray_variant-%d' % i)
-    if 'refplat-vfx2023.1' in variant:
+    if 'refplat-vfx2023.1' in variant or 'refplat-vfx2022.0' in variant:
         variant.extend(['PyQt5-5.15.6', 'PyQtChart-5.15.6'])
     elif 'refplat-vfx2026.0' in variant:
         variant.append('PySide6-6.8.6')
