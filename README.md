@@ -25,9 +25,12 @@ To clone this repository along with the submodules:
 
 You can get started building MoonRay on Linux or MacOS, or a container by reading the [Building MoonRay](https://docs.openmoonray.org/getting-started/installation/building-moonray/) documentatation website.
 
+### Houdini Color Management
+
+For Houdini 22 and Solaris, see [Houdini 22 OCIO color management](docs/houdini-color-management.md) for configuration, texture policies, working-space behavior, output handling, and troubleshooting.
+
 
 
 ### Developer Quick Start
 
 A helpful start will be at understanding the [structure of the source code](https://docs.openmoonray.org/developer-reference/source-structure/), followed by the overall [Developer's Guide](https://docs.openmoonray.org/developer-reference/).
-

@@ -1,0 +1,6 @@
+diff --git a/libs/python/build/Jamfile b/libs/python/build/Jamfile
+--- a/libs/python/build/Jamfile
++++ b/libs/python/build/Jamfile
+@@ -136,1 +136,1 @@
+-if [ python.configured ] && [ python.numpy ]
++if ""

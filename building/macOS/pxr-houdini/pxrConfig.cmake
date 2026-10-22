@@ -17,12 +17,12 @@
 get_filename_component(PXR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(PXR_MAJOR_VERSION "0")
-set(PXR_MINOR_VERSION "22")
+set(PXR_MINOR_VERSION "26")
 set(PXR_PATCH_VERSION "5")
-set(PXR_VERSION "2205")
+set(PXR_VERSION "2605")
 
 include("${PXR_CMAKE_DIR}/pxrTargets.cmake")
-set(libs "arch;tf;gf;js;trace;work;plug;vt;ar;kind;sdf;ndr;sdr;pcp;usd;usdGeom;usdVol;usdMedia;usdShade;usdLux;usdRender;usdHydra;usdRi;usdSkel;usdUI;usdUtils;usdPhysics;garch;hf;hio;cameraUtil;pxOsd;glf;hgi;hgiGL;hgiInterop;hd;hdSt;hdx;usdImaging;usdImagingGL;usdRiImaging;usdSkelImaging;usdVolImaging;usdAppUtils;usdviewq")
+set(libs "arch;tf;gf;js;trace;work;plug;vt;ar;kind;sdf;sdr;pcp;usd;usdGeom;usdVol;usdMedia;usdShade;usdLux;usdRender;usdHydra;usdRi;usdSkel;usdUI;usdUtils;usdPhysics;garch;hf;hio;cameraUtil;pxOsd;glf;hgi;hgiGL;hgiInterop;hd;hdsi;hdSt;hdx;hdMtlx;usdImaging;usdImagingGL;usdSkelImaging;usdVolImaging;usdAppUtils;usdMtlx")
 set(PXR_LIBRARIES "")
 set(PXR_INCLUDE_DIRS "$ENV{PXR_INCLUDE_PREFIX}")
 string(REPLACE " " ";" libs "${libs}")
