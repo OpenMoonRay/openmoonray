@@ -53,3 +53,22 @@ then
     ${omr_root}/bin/rdl2_json_exporter --out ${omr_root}/shader_json/ --sparse
     echo "...done"
 fi
+
+# MoonRay can need many files open at once (texture_file_handles is 24000 by
+# default), but the default open file limit is much lower (256 on macOS, 1024
+# on most Linux distributions). Raise it, up to the hard limit, for this shell
+# and everything launched from it. Only the soft limit is changed (-S): in bash,
+# a plain "ulimit -n" would also lower the hard limit for good.
+omr_fd_target=65536
+omr_fd_hard=$(ulimit -Hn)
+if [ "${omr_fd_hard}" != "unlimited" ] && [ "${omr_fd_hard}" -lt "${omr_fd_target}" ]
+then
+    omr_fd_target=${omr_fd_hard}
+fi
+omr_fd_current=$(ulimit -Sn)
+if [ "${omr_fd_current}" != "unlimited" ] && [ "${omr_fd_current}" -lt "${omr_fd_target}" ]
+then
+    ulimit -Sn ${omr_fd_target}
+fi
+echo "Max file descriptors set to $(ulimit -Sn)"
+unset omr_fd_target omr_fd_hard omr_fd_current
