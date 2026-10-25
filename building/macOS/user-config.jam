@@ -1,6 +1,6 @@
-using python : 3.9
-  : "/Library/Developer/CommandLineTools/usr/bin/python3"
-  : "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Headers"
-  : "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib"
+using python : 3.13
+  : "/Applications/Houdini/Houdini22.0.408/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python"
+  : "/Applications/Houdini/Houdini22.0.408/Frameworks/Python.framework/Versions/3.13/include/python3.13"
+  : "/Applications/Houdini/Houdini22.0.408/Frameworks/Python.framework/Versions/3.13/lib"
   ;
 using clang : : : <compileflags>-"arch arm64" <linkflags>"-arch arm64" ;
