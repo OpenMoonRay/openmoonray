@@ -25,8 +25,9 @@ echo "Setting up release in ${omr_root}"
 # NB required for Arras to function (it needs to find execComp)
 export PATH=${omr_root}/bin:${PATH}
 
-# need python modules for the USD interface and for the RATS tests
-export PYTHONPATH=${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib64/python3.9/site-packages/:${PYTHONPATH}
+# Need Python modules for the USD interface and the RATS tests.  The macOS
+# Houdini build installs its bindings for Python 3.13.
+export PYTHONPATH=${omr_root}/python/lib/python3.13:${install_root}/lib/python3.13/site-packages:${install_root}/lib/python:${install_root}/lib64/python3.9/site-packages:/usr/local/lib/python:${PYTHONPATH}
 
 
 # tell moonray where to find dsos
