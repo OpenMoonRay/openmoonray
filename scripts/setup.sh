@@ -50,10 +50,13 @@ fi
 
 # MoonRay can need many files open at once (texture_file_handles is 24000 by
 # default), but the default open file limit is much lower (256 on macOS, 1024
-# on most Linux distributions). Raise it, up to the hard limit, for this shell
-# and everything launched from it. Only the soft limit is changed (-S): in bash,
+# on most Linux distributions). Raise it, up to the hard limit, or 65535 if
+# the hard limit is higher than that, for this shell
+# and everything launched from it. 
+# Note that 65535 is an arbitrary choice, and your needs may require a higher value.
+# Only the soft limit is changed (-S): in bash,
 # a plain "ulimit -n" would also lower the hard limit for good.
-omr_fd_target=65536
+omr_fd_target=65535
 omr_fd_hard=$(ulimit -Hn)
 if [ "${omr_fd_hard}" != "unlimited" ] && [ "${omr_fd_hard}" -lt "${omr_fd_target}" ]
 then
