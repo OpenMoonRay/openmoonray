@@ -13,6 +13,10 @@ MoonRay is released under the [Apache License, Version 2.0](LICENSE), which is a
 
 MoonRay welcomes contributions to the project. Please refer to the [Contribution Guidelines](CONTRIBUTING.md) for details on how to make a contribution.
 
+### TSC Meetings
+**Time:** Every four weeks on Thursday, 11am - 12pm PST<br>
+**Meeting Link:** https://app.lfx.dev/meetings/99441193791?password=bbff5161-8572-4d35-bbbf-b944947ed513<br>
+
 ### Cloning
 
 This is the top-level repository for the MoonRay project. The actual source code is contained in a number of other repositories referenced here as git submodules.
