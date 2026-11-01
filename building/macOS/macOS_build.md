@@ -48,7 +48,9 @@ Note: If building for Houdini, you'll potentially need to make the following cha
 * Edit source/openmoonray/scripts/macOS/setupHoudini.sh to update HOUDINI_PATH
 * Edit source/openmoonray/building/macOS/pxr-houdini/pxrTargets.cmake to update HPYTHONLIB and HPYTHONINC if needed
 
-Houdini 20 is officially supported.
+Houdini 20 is officially supported. The experimental Houdini 22 alignment and
+its exact dependency, submodule, build, and validation details are documented
+in [Houdini22_build_notes.md](Houdini22_build_notes.md).
 
 ---
 ### Step 4. Build the dependencies
