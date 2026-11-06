@@ -5,8 +5,8 @@
             "name": "macos-environment",
             "hidden": true,
             "environment": {
-                "DEPS_ROOT"                     : "${sourceParentDir}/installs",
-                "BUILD_DIR"                     : "${sourceParentDir}/build",
+                "DEPS_ROOT"                     : "/Applications/MoonRay/installs",
+                "BUILD_DIR"                     : "/Applications/MoonRay/build",
                 "Boost_ROOT"                    : "$env{DEPS_ROOT}",
                 "Libuuid_ROOT"                  : "$env{DEPS_ROOT}",
                 "CppUnit_ROOT"                  : "$env{DEPS_ROOT}",
@@ -20,17 +20,31 @@
                 "OPTIX_ROOT"                    : "$env{DEPS_ROOT}/optix",
                 "PXR_USD_LOCATION"              : "$env{DEPS_ROOT}",
                 "PXR_INCLUDE_DIRS"              : "$env{DEPS_ROOT}/include",
+                "PXR_BOOST_PYTHON_LIB"          : "/Applications/Houdini/Houdini22.0.408/Frameworks/Houdini.framework/Versions/Current/Libraries/libhboost_python313-mt-a64.dylib",
                 "Random123_ROOT"                : "$env{DEPS_ROOT}",
                 "ZLIB_ROOT"                     : "$env{DEPS_ROOT}",
-                "OIIO_PYTHON"                   : "$env{DEPS_ROOT}/lib/python3.9/site-packages"
+                "OIIO_PYTHON"                   : "$env{DEPS_ROOT}/lib/python3.13/site-packages"
             },
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}",
-                "CMAKE_CXX_FLAGS": "-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -I${sourceParentDir}/building/macOS/houdini-usd-fixes",
+                "CMAKE_CXX_FLAGS": "-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -DFMT_USE_NONTYPE_TEMPLATE_ARGS=0 -DFMT_USE_CONSTEXPR=0 -DFMT_CONSTEVAL= -I/Applications/MoonRay/source/openmoonray/building/macOS/houdini-usd-fixes",
                 "CMAKE_IGNORE_PATH": "/opt/homebrew",
                 "CMAKE_IGNORE_PREFIX_PATH": "/opt/homebrew",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
-                "Python_EXECUTABLE": "/usr/bin/python3"
+                "Python_EXECUTABLE": "/Applications/Houdini/Houdini22.0.408/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+                "CMAKE_CXX_STANDARD": "20",
+                "BUILD_QT_APPS": "OFF",
+                "BUILD_MATERIALX_SHADERS": "ON",
+                "BUILD_TESTING": "OFF",
+                "SCENERDL2_BUILD_TESTING": "OFF",
+                "MOONRAY_BUILD_TESTING": "OFF",
+                "ARRAS4_CORE_BUILD_TESTING": "OFF",
+                "MOONRAY_USE_METAL": "OFF",
+                "BUILD_MOONRAY_SDR_PLUGINS": "OFF",
+                "BUILD_HD_COMMANDS": "OFF",
+                "Vulkan_INCLUDE_DIR": "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/include",
+                "Vulkan_LIBRARY": "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries/libvulkan.dylib",
+                "CMAKE_ISPC_COMPILER": "$env{ISPC}"
             }
         },
         {
@@ -38,12 +52,12 @@
             "hidden": true,
             "inherits": "macos-environment",
             "environment": {
-                "PREFIX_PXR"                : "${sourceParentDir}/building/macOS/pxr-houdini",
-                "HOUDINI_INSTALL_DIR"       : "/Applications/Houdini/Houdini20.0.751",
+                "PREFIX_PXR"                : "/Applications/MoonRay/source/openmoonray/building/macOS/pxr-houdini",
+                "HOUDINI_INSTALL_DIR"       : "/Applications/Houdini/Houdini22.0.408",
                 "PXR_LIB_PREFIX"            : "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries",
                 "PXR_INCLUDE_PREFIX"        : "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/include",
                 "PXR_DEPS_PREFIX"           : "$env{DEPS_ROOT}",
-                "PXR_BOOST_PYTHON_LIB"      : "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries/libhboost_python39-mt-a64.dylib"
+                "PXR_BOOST_PYTHON_LIB"      : "$env{HOUDINI_INSTALL_DIR}/Frameworks/Houdini.framework/Versions/Current/Libraries/libhboost_python313-mt-a64.dylib"
             },
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT};$env{PREFIX_PXR}",
@@ -57,7 +71,7 @@
             "binaryDir": "$env{BUILD_DIR}",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_INSTALL_PREFIX": "${sourceParentDir}/installs/openmoonray"
+                "CMAKE_INSTALL_PREFIX": "/Applications/MoonRay/installs/openmoonray"
             },
             "generator": "Xcode"
         },
@@ -68,9 +82,9 @@
             "binaryDir": "$env{BUILD_DIR}",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_INSTALL_PREFIX": "${sourceParentDir}/installs/openmoonray"
+                "CMAKE_INSTALL_PREFIX": "/Applications/MoonRay/installs/openmoonray"
             },
-            "generator": "Xcode"
+            "generator": "Unix Makefiles"
         }
     ],
     "buildPresets": [
