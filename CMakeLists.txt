@@ -6,8 +6,10 @@ cmake_minimum_required (VERSION 3.23.1)
 project(openmoonray)
 
 list(APPEND CMAKE_MESSAGE_CONTEXT ${PROJECT_NAME})
-if(NOT DEFINED CMAKE_INSTALL_PREFIX OR ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local")
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/release)
+# Set default install prefix to local release directory if not explicitly provided
+# or if default system path (/usr/local) is being used.
+if(NOT DEFINED CMAKE_INSTALL_PREFIX OR CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/release")
 endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/cmake)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rats/cmake)
