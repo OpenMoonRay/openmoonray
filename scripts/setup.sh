@@ -26,15 +26,7 @@ echo "Setting up release in ${omr_root}"
 export PATH=${omr_root}/bin:${PATH}
 
 # need python modules for the USD interface and for the RATS tests
-if [ -d "${install_root}/lib/python3.9/site-packages" ]
-then
-    export PYTHONPATH=${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib/python3.9/site-packages/:${install_root}/openmoonray/Release/python/lib/python3.9:${PYTHONPATH}
-elif [ -d "${install_root}/lib64/python3.9/site-packages" ]
-then
-    export PYTHONPATH=${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib64/python3.9/site-packages/:${install_root}/openmoonray/Release/python/lib/python3.9:${PYTHONPATH}
-else
-    echo "ERROR: Could not find site-packages in ${install_root}/lib or ${install_root}/lib64"
-fi
+export PYTHONPATH=${install_root}/lib/python:/usr/local/lib/python:${install_root}/lib64/python3.9/site-packages/:${PYTHONPATH}
 
 
 # tell moonray where to find dsos

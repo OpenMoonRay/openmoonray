@@ -1,0 +1,83 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright Contributors to the MoonRay Project.
+
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "Matrix variant to run (for fast targeted iteration while debugging CI itself). 'all' runs the full matrix."
+        type: choice
+        default: "all"
+        options:
+          - "all"
+          - "aswf-ci-2025-release"
+          - "aswf-ci-2025-debug"
+          - "aswf-ci-2025-clang"
+          - "aswf-ci-2025-sanitizer"
+          - "aswf-ci-2026-release"
+
+# Cancel in-progress runs for the same PR or branch when a new commit arrives.
+# (PR-triggered runs are currently disabled; this also covers the no-PR workflow_dispatch case.)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: read-all
+
+# Each CY20XX variant is its own job calling the shared build-moonray.yml
+# reusable workflow, rather than one matrix job. This gives each variant a
+# clean display name and lets the `variant` dispatch input skip a job
+# entirely (including its container setup/teardown) via a job-level `if:`.
+jobs:
+  cy2025-release:
+    name: CY2025 Release
+    if: github.repository_owner == 'OpenMoonRay' && (github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'aswf-ci-2025-release')
+    uses: ./.github/workflows/build-moonray.yml
+    with:
+      aswf_version: "2025"
+      cmake_preset: "aswf-ci-2025-release"
+      skip_smoke_tests: false
+      skip_hd_smoke_test: false
+
+  cy2025-debug:
+    name: CY2025 Debug
+    if: github.repository_owner == 'OpenMoonRay' && (github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'aswf-ci-2025-debug')
+    uses: ./.github/workflows/build-moonray.yml
+    with:
+      aswf_version: "2025"
+      cmake_preset: "aswf-ci-2025-debug"
+      skip_smoke_tests: true   # debug builds are slow; unit tests provide sufficient coverage
+      skip_hd_smoke_test: true
+
+  cy2025-clang:
+    name: CY2025 clang
+    if: github.repository_owner == 'OpenMoonRay' && (github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'aswf-ci-2025-clang')
+    uses: ./.github/workflows/build-moonray.yml
+    with:
+      aswf_version: "2025"
+      cmake_preset: "aswf-ci-2025-clang"
+      skip_smoke_tests: false
+      skip_hd_smoke_test: true   # hdMoonray smoke test uses USD's hydra plugin; gcc-compiled USD in the container
+                              # has ABI incompatibilities with clang-compiled moonray at runtime
+
+  cy2025-sanitizer:
+    name: CY2025 Sanitizer
+    if: github.repository_owner == 'OpenMoonRay' && (github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'aswf-ci-2025-sanitizer')
+    uses: ./.github/workflows/build-moonray.yml
+    with:
+      aswf_version: "2025"
+      cmake_preset: "aswf-ci-2025-sanitizer"
+      skip_smoke_tests: false
+      skip_hd_smoke_test: true   # clang-compiled; same gcc/clang USD hydra ABI mismatch as CY2025 clang
+
+  cy2026-release:
+    name: CY2026 Release
+    if: github.repository_owner == 'OpenMoonRay' && (github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'aswf-ci-2026-release')
+    uses: ./.github/workflows/build-moonray.yml
+    with:
+      aswf_version: "2026"
+      cmake_preset: "aswf-ci-2026-release"
+      skip_smoke_tests: false
+      skip_hd_smoke_test: false

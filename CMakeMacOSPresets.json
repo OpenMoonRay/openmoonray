@@ -26,6 +26,7 @@
             },
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "$env{DEPS_ROOT}",
+                "CMAKE_CXX_FLAGS": "-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -I${sourceParentDir}/building/macOS/houdini-usd-fixes",
                 "CMAKE_IGNORE_PATH": "/opt/homebrew",
                 "CMAKE_IGNORE_PREFIX_PATH": "/opt/homebrew",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
@@ -70,6 +71,49 @@
                 "CMAKE_INSTALL_PREFIX": "${sourceParentDir}/installs/openmoonray"
             },
             "generator": "Xcode"
+        },
+        {
+            "name": "aswf-ci-macos-environment",
+            "hidden": true,
+            "environment": {
+                "BUILD_DIR"             : "${sourceDir}/../build",
+                "ISPC"                  : "/opt/homebrew/bin/ispc",
+                "Random123_ROOT"        : "$penv{Random123_ROOT}",
+                "Boost_ROOT"            : "/opt/homebrew",
+                "CppUnit_ROOT"          : "/opt/homebrew",
+                "JsonCpp_ROOT"          : "/opt/homebrew",
+                "Log4cplus_ROOT"        : "/opt/homebrew",
+                "LUA_DIR"               : "/opt/homebrew/opt/lua@5.4",
+                "LIBMICROHTTPD_ROOT"    : "/opt/homebrew",
+                "OpenSubDiv_ROOT"       : "/opt/homebrew",
+                "OpenVDB_ROOT"          : "/opt/homebrew",
+                "Libcurl_ROOT"          : "/opt/homebrew/opt/curl",
+                "ZLIB_ROOT"             : "/usr",
+                "PXR_USD_LOCATION"      : "/tmp/usd-install",
+                "PXR_INCLUDE_DIRS"      : "/tmp/usd-install/include",
+                "OIIO_PYTHON"           : "/opt/homebrew/lib/python3.13/site-packages"
+            },
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH"             : "/opt/homebrew;/opt/homebrew/opt/openssl@3;/opt/homebrew/opt/jpeg-turbo;/opt/homebrew/opt/lua@5.4;/opt/homebrew/opt/curl;/tmp/usd-install",
+                "ABI_VERSION"                   : "0",
+                "BUILD_QT_APPS"                 : "OFF",
+                "MOONRAY_USE_OPTIX"             : "OFF",
+                "PYTHON_EXECUTABLE"             : "python3",
+                "BOOST_PYTHON_COMPONENT_NAME"   : "python313"
+            }
+        },
+        {
+            "name": "aswf-ci-macos-release",
+            "displayName": "ASWF CI macOS Release (Homebrew/ARM)",
+            "inherits": "aswf-ci-macos-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE"      : "Release",
+                "CMAKE_INSTALL_PREFIX"  : "${sourceDir}/../installs/openmoonray",
+                "CMAKE_C_COMPILER"      : "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER"    : "/usr/bin/clang++"
+            },
+            "generator": "Unix Makefiles"
         }
     ],
     "buildPresets": [
@@ -86,6 +130,12 @@
             "configurePreset": "macos-houdini-release",
             "configuration": "Release",
             "targets": ["install"]
+        },
+        {
+            "name": "aswf-ci-macos-release",
+            "displayName": "ASWF CI macOS Release (Homebrew/ARM)",
+            "configurePreset": "aswf-ci-macos-release",
+            "configuration": "Release"
         }
     ]
 }
