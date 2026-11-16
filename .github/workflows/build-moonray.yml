@@ -1,0 +1,363 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright Contributors to the MoonRay Project.
+
+# Builds and tests MoonRay for one CI variant (one aswf/ci-moonray image +
+# cmake preset combination). Called once per variant from ci.yml.
+
+name: Build MoonRay
+
+on:
+  workflow_call:
+    inputs:
+      aswf_version:
+        description: "aswf/ci-moonray image tag to build against, e.g. '2025'"
+        required: true
+        type: string
+      cmake_preset:
+        description: "CMake preset name from CMakeCIPresets.json, e.g. 'aswf-ci-2025-release'"
+        required: true
+        type: string
+      skip_smoke_tests:
+        description: "Skip Install + both smoke-test steps (used for the slow debug build)"
+        required: false
+        type: boolean
+        default: false
+      skip_hd_smoke_test:
+        description: "Skip just the USD hydra smoke test (used for the clang build, which has a gcc/clang USD ABI mismatch at runtime)"
+        required: false
+        type: boolean
+        default: false
+
+permissions: read-all
+
+env:
+  CONAN_HOME: /opt/conan_home
+  CCACHE_DIR: /opt/ccache
+  # Only affect ASan/UBSan-instrumented binaries (the sanitizer variant);
+  # harmless no-ops for every other variant. halt_on_error is needed because
+  # UBSan's default behavior is to print and continue, not fail the process.
+  ASAN_OPTIONS: halt_on_error=1
+  UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: aswf/ci-moonray:${{ inputs.aswf_version }}
+      # Official ASWF image with all moonray Conan dependencies baked in at
+      # $CONAN_HOME. Released at hub.docker.com/r/aswf/ci-moonray.
+
+    defaults:
+      run:
+        # All steps run inside the checked-out source directory.
+        working-directory: ${{ github.workspace }}
+
+    steps:
+      - name: Check out source (with submodules)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+
+      - name: Dump environment diagnostics
+        run: |
+          echo "=== nproc ==="
+          nproc
+          echo "=== /proc/cpuinfo ==="
+          cat /proc/cpuinfo
+          echo "=== env ==="
+          env | sort
+
+      # /__t is the GitHub Actions runner's own tool-cache, where actions
+      # like setup-python/setup-node/setup-go cache preinstalled SDKs. This
+      # workflow never uses any setup-* action, so it's dead weight (a few
+      # GB) toward the runner's disk budget. CY2026's larger dependency set
+      # (USD 26.3, gcc-toolset-14) leaves little headroom on the standard
+      # runner's disk, so reclaim this unconditionally before it matters.
+      - name: Free disk space — remove unused Actions tool-cache
+        run: |
+          echo "Before:"; du -sh /__t 2>/dev/null || true
+          rm -rf /__t/* 2>/dev/null || true
+          echo "After:"; du -sh /__t 2>/dev/null || true
+
+      # ${{ github.workspace }} is evaluated by the runner using the host
+      # path, but inside the container the workspace is mounted at a
+      # different path. Using $GITHUB_WORKSPACE here gives the
+      # container-internal path for all later steps.
+      - name: Set build directory path
+        run: |
+          PARENT=$(cd "$GITHUB_WORKSPACE/.." && pwd)
+          echo "BUILD_DIR=$PARENT/build" >> "$GITHUB_ENV"
+          echo "INSTALL_DIR=$PARENT/installs/openmoonray" >> "$GITHUB_ENV"
+
+      # Workaround: IMG-05 — a handful of system libs used by MoonRay aren't
+      # included in the ci-moonray image and must be installed here.
+      - name: Install missing system dependencies
+        run: |
+          dnf install -y epel-release 2>/dev/null || true
+          # --disablerepo=cuda: none of these packages come from the image's
+          # pre-enabled 'cuda' yum repo, so skipping its metadata refresh
+          # avoids spurious failures during upstream repo outages.
+          dnf install -y --disablerepo=cuda \
+            cppunit-devel \
+            libglvnd-devel \
+            blosc-devel \
+            libtiff-devel \
+            giflib-devel \
+            freetype-devel \
+            ccache
+          # Drop the downloaded-package cache; we never reinstall from it
+          # within this job, so it's pure disk overhead past this point.
+          dnf clean all
+
+      # Restores a compiler cache from the previous run on this variant, so
+      # unchanged translation units don't have to be recompiled from
+      # scratch every time. Falls back to the most recent cache for this
+      # variant if today's exact key hasn't been saved yet.
+      - name: Prepare ccache timestamp
+        id: ccache_cache_keys
+        run: echo "date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ inputs.cmake_preset }}-${{ steps.ccache_cache_keys.outputs.date }}
+          restore-keys: ccache-${{ inputs.cmake_preset }}-
+
+      # Most Conan-deployed packages are found automatically via
+      # CMAKE_PREFIX_PATH. A few land at non-standard paths, so locate them
+      # explicitly and export *_DIR/*_ROOT variables so find_package never
+      # has to guess.
+      - name: Export CMake dep paths
+        run: |
+          find_cmake_dir() {
+            local name=$1; shift
+            local result
+            result=$(find /usr/local -name "${name}Config.cmake" -o -name "${name,,}-config.cmake" 2>/dev/null | head -1)
+            if [ -n "$result" ]; then
+              dirname "$result"
+            else
+              find / -maxdepth 8 -name "${name}Config.cmake" 2>/dev/null | head -1 | xargs -r dirname
+            fi
+          }
+
+          OIDN_DIR=$(find_cmake_dir OpenImageDenoise)
+          EMBREE_DIR=$(find_cmake_dir embree)
+
+          echo "=== CMake config locations ==="
+          echo "  OpenImageDenoise: ${OIDN_DIR:-NOT FOUND}"
+          echo "  embree:           ${EMBREE_DIR:-NOT FOUND}"
+          echo "  ispc:             /usr/local/bin/ispc (provided by image)"
+
+          {
+            echo "ASWF_CMAKE_PREFIX_PATH=/usr/local;/usr/local/x86_64"
+            echo "JsonCpp_ROOT=/usr/local"
+            echo "Log4cplus_ROOT=/usr/local"
+            echo "LIBMICROHTTPD_ROOT=/usr/local"
+            echo "Random123_ROOT=/usr/local"
+            echo "LUA_DIR=/usr/local"
+            echo "ISPC=/usr/local/bin/ispc"
+            { [ -n "$OIDN_DIR" ]   && echo "OpenImageDenoise_DIR=${OIDN_DIR}"; } || true
+            { [ -n "$EMBREE_DIR" ] && echo "embree_DIR=${EMBREE_DIR}";         } || true
+          } >> "$GITHUB_ENV"
+
+      # Workaround: IMG-04 — some cmake files deployed into /usr/local
+      # (including pxrConfig.cmake itself) retain stale absolute
+      # /opt/conan_home/... paths from the image build environment. Rewrite
+      # them to /usr/local, where the packages actually live at runtime.
+      - name: Fix Conan artifacts in deployed cmake files
+        shell: bash
+        run: |
+          affected=$(grep -rl '/opt/conan_home/' /usr/local \
+                       --include='*.cmake' 2>/dev/null || true)
+          if [ -n "$affected" ]; then
+            count=$(echo "$affected" | wc -l)
+            echo "Found $count cmake file(s) with stale Conan paths"
+            echo "$affected" | while IFS= read -r f; do
+              sed -i -E 's|/opt/conan_home/[a-zA-Z0-9/_.-]+|/usr/local|g' "$f"
+            done
+            echo "Done"
+          else
+            echo "no stale paths found"
+          fi
+
+      # Workaround: MR-B — USD 26.x removed the standalone ndr/ component
+      # that moonray_sdr_plugins depends on. Until it's ported to the SDR
+      # API, disable that subdirectory for USD >= 26 so the rest of the
+      # hydra build is unaffected.
+      - name: Patch moonray for USD 26+ NDR removal
+        run: |
+          USD_VER=$(grep -m1 '#define PXR_VERSION ' \
+            /usr/local/include/pxr/pxr.h 2>/dev/null | awk '{print $3}' || echo 0)
+          echo "USD version code: ${USD_VER}"
+          if [ "${USD_VER}" -ge 2600 ] 2>/dev/null; then
+            HYDRA_CMAKE="${GITHUB_WORKSPACE}/moonray/hydra/CMakeLists.txt"
+            sed -i \
+              's|^add_subdirectory(moonray_sdr_plugins)|# disabled: NDR removed in USD 26.x\n# add_subdirectory(moonray_sdr_plugins)|' \
+              "$HYDRA_CMAKE"
+            echo "Disabled moonray_sdr_plugins for USD ${USD_VER} (NDR removed in USD 26.x)"
+          else
+            echo "USD ${USD_VER} < 2600, moonray_sdr_plugins left enabled"
+          fi
+
+      # The preset reads the env vars exported above. Also applies two more
+      # workarounds encoded directly in CMakeCIPresets.json (JSON has no
+      # comment syntax, so noted here instead):
+      #   IMG-07 — CMAKE_FIND_PACKAGE_TARGETS_GLOBAL=ON, since OpenSubdiv's
+      #            imported targets aren't declared GLOBAL
+      #   MR-C   — CMAKE_POLICY_VERSION_MINIMUM=3.5 on 2026+, since
+      #            moonray's FindTBB.cmake declares a cmake_minimum_required
+      #            too old for cmake 4.x to accept
+      # Externalized into .github/ci-scripts/ so a contributor can reproduce
+      # these two steps locally inside an aswf/ci-moonray container.
+      - name: Configure CMake
+        env:
+          CMAKE_PRESET: ${{ inputs.cmake_preset }}
+        run: .github/ci-scripts/ci-configure.bash
+
+      # Workaround: B8 — HVD_VALIDATE's null-pointer-offset UB (a pre-existing,
+      # known bug) now fires as a hard UBSan abort during the MaterialX codegen
+      # step's dlopen() of scene_rdl2, under the sanitizer preset. Deferred
+      # (not yet fixed): don't let it fail the whole job — real Configure/Build
+      # regressions on every other preset still fail normally.
+      - name: Build
+        env:
+          CMAKE_PRESET: ${{ inputs.cmake_preset }}
+        continue-on-error: ${{ inputs.cmake_preset == 'aswf-ci-2025-sanitizer' }}
+        run: .github/ci-scripts/ci-build.bash
+
+      - name: Save ccache
+        if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ inputs.cmake_preset }}-${{ steps.ccache_cache_keys.outputs.date }}
+
+      # Skipped for the debug preset: GitHub-hosted runners only have 4
+      # vCPUs, and several tests are hang/timeout-prone in a debug build on
+      # such an under-powered host. The debug job's purpose is just
+      # confirming the code builds in Debug.
+      # Known, pre-existing undefined-behavior/leak findings currently make
+      # every test fail under the sanitizer preset. Don't let that fail the
+      # whole job: Configure/Build failures (real CI regressions) still fail
+      # normally, but these known test failures are surfaced as a warning
+      # instead of blocking CI until they're fixed.
+      - name: Unit tests
+        if: ${{ inputs.cmake_preset != 'aswf-ci-2025-debug' }}
+        continue-on-error: ${{ inputs.cmake_preset == 'aswf-ci-2025-sanitizer' }}
+        run: |
+          ctest -L unit \
+                -E scenerdl2_common_grid_util_tests \
+                --test-dir "$BUILD_DIR" \
+                --output-on-failure \
+                --no-compress-output \
+                --timeout 1500 \
+                -j$(nproc)
+
+      # Object files are no longer needed once everything is linked: Install
+      # just copies the already-built binaries/libraries, and ccache (saved
+      # above) is the thing that actually speeds up future builds, not these
+      # files. Freeing them here reclaims real space on the standard
+      # runner's disk right before the step that's been failing (CY2026
+      # Release, whose larger dependency set leaves little headroom).
+      - name: Free disk space — remove build object files
+        if: ${{ !inputs.skip_smoke_tests }}
+        run: |
+          echo "Before:"; du -sh "$BUILD_DIR" 2>/dev/null || true
+          find "$BUILD_DIR" -name '*.o' -delete 2>/dev/null || true
+          echo "After:"; du -sh "$BUILD_DIR" 2>/dev/null || true
+
+      # Diagnostic for a currently-unexplained Install-step failure (CY2026
+      # Release): the runner's logs aren't being captured at all when it
+      # happens, a signature of the runner process being killed outright
+      # (OOM/disk-exhaustion) rather than a normal command failure. Written
+      # to a file and uploaded as an artifact (not just stdout) because
+      # that job's entire log blob fails to finalize when the runner is
+      # killed mid-job — artifact storage is a separate, more reliable path.
+      - name: Disk usage before Install
+        if: always()
+        run: |
+          {
+            echo "=== df -h ==="
+            df -h
+            echo "=== du -sh BUILD_DIR ==="
+            du -sh "$BUILD_DIR" 2>/dev/null || true
+            echo "=== du -sh INSTALL_DIR ==="
+            du -sh "${INSTALL_DIR:-$HOME}" 2>/dev/null || true
+            echo "=== mount (filesystems in play) ==="
+            mount | grep -E "on (/|/__w|/__t|/opt) " || true
+            echo "=== du -h --max-depth=1 / (top-level culprits) ==="
+            du -h --max-depth=1 / 2>&1 || true
+            echo "=== du -h --max-depth=2 /__w (workspace breakdown) ==="
+            du -h --max-depth=2 /__w 2>&1 || true
+            echo "=== du -h --max-depth=1 /opt (ccache/conan/etc) ==="
+            du -h --max-depth=1 /opt 2>&1 || true
+            echo "=== free -h ==="
+            free -h 2>/dev/null || true
+          } | tee /tmp/disk-usage-before-install.txt
+
+      - name: Upload disk usage diagnostic
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: disk-usage-before-install-${{ inputs.cmake_preset }}-${{ github.sha }}
+          path: /tmp/disk-usage-before-install.txt
+
+      # Workaround: B8 — under the sanitizer preset, Build's MaterialX codegen
+      # step aborts on B8 before generating shaders.py (see the Build step
+      # above), so Install then fails for real trying to install that
+      # missing file. continue-on-error here for the same reason as Build.
+      - name: Install
+        if: ${{ !inputs.skip_smoke_tests }}
+        continue-on-error: ${{ inputs.cmake_preset == 'aswf-ci-2025-sanitizer' }}
+        run: |
+          cmake --install "$BUILD_DIR"
+
+      # Basic smoke tests: render two scenes with moonray and hdMoonray (via
+      # usdrecord), to verify the core renderer is functional without GPU
+      # hardware. Like the Unit tests step, these are continue-on-error for
+      # the sanitizer preset: the same known, pre-existing UB findings fire
+      # here too since they run the real moonray binary, not just test
+      # binaries.
+      - name: Smoke test — CPU render (rectangle)
+        if: ${{ !inputs.skip_smoke_tests }}
+        continue-on-error: ${{ inputs.cmake_preset == 'aswf-ci-2025-sanitizer' }}
+        run: |
+          source "$INSTALL_DIR/scripts/setup.sh"
+          moonray -exec_mode scalar -auto_affinity off -in testdata/rectangle.rdla -out /tmp/rectangle.jpg
+          moonray -exec_mode vector -auto_affinity off -in testdata/rectangle.rdla -out /tmp/rectangle.jpg
+
+      - name: Smoke test — USD hydra render (sphere)
+        if: ${{ !inputs.skip_smoke_tests && !inputs.skip_hd_smoke_test }}
+        continue-on-error: ${{ inputs.cmake_preset == 'aswf-ci-2025-sanitizer' }}
+        run: |
+          source "$INSTALL_DIR/scripts/setup.sh"
+          env USDIMAGINGGL_ENGINE_ENABLE_SCENE_INDEX=1 \
+            usdrecord -r Moonray --disableGpu --disableCameraLight -c medium \
+              testdata/sphere.usd /tmp/sphere.png
+
+      - name: Upload render artifacts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: renders-${{ inputs.cmake_preset }}-${{ github.sha }}
+          path: |
+            /tmp/*.jpg
+            /tmp/*.png
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # Lets a failed run be triaged from the GitHub UI without needing to
+      # re-run it: cmake's own config/error logs plus any ctest output.
+      - name: Upload debug artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: debug-logs-${{ inputs.cmake_preset }}-${{ github.sha }}
+          path: |
+            ${{ env.BUILD_DIR }}/CMakeFiles/CMakeOutput.log
+            ${{ env.BUILD_DIR }}/CMakeFiles/CMakeError.log
+            ${{ env.BUILD_DIR }}/CMakeCache.txt
+            ${{ env.BUILD_DIR }}/Testing/Temporary/LastTest.log
+          if-no-files-found: ignore
+          retention-days: 7

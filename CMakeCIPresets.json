@@ -1,0 +1,173 @@
+{
+    "version": 7,
+    "configurePresets": [
+        {
+            "name": "aswf-ci-environment",
+            "hidden": true,
+            "environment": {
+                "BUILD_DIR"             : "${sourceDir}/../build",
+                "Boost_ROOT"            : "/usr/local",
+                "Libuuid_ROOT"          : "/usr/local",
+                "CppUnit_ROOT"          : "/usr/local",
+                "Libcurl_ROOT"          : "/usr",
+                "OpenSubDiv_ROOT"       : "/usr/local",
+                "OpenVDB_ROOT"          : "/usr/local",
+                "PXR_USD_LOCATION"      : "/usr/local",
+                "PXR_INCLUDE_DIRS"      : "/usr/local/include",
+                "ZLIB_ROOT"             : "/usr",
+                "OIIO_PYTHON"           : "/usr/local/lib/python3.10/site-packages",
+                "ISPC"                  : "$penv{ISPC}",
+                "JsonCpp_ROOT"          : "$penv{JsonCpp_ROOT}",
+                "Log4cplus_ROOT"        : "$penv{Log4cplus_ROOT}",
+                "LUA_DIR"               : "$penv{LUA_DIR}",
+                "Random123_ROOT"        : "$penv{Random123_ROOT}",
+                "LIBMICROHTTPD_ROOT"    : "$penv{LIBMICROHTTPD_ROOT}"
+            },
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH"             : "$penv{ASWF_CMAKE_PREFIX_PATH}",
+                "PYTHON_EXECUTABLE"             : "python3",
+                "BOOST_PYTHON_COMPONENT_NAME"   : "python310",
+                "ABI_VERSION"                   : "0",
+                "MOONRAY_USE_OPTIX"             : "OFF",
+                "CMAKE_CUDA_COMPILER"           : "/usr/local/cuda/bin/nvcc",
+                "CMAKE_CUDA_HOST_COMPILER"      : "/opt/rh/$penv{ASWF_DTS_PREFIX}-$penv{ASWF_DTS_VERSION}/root/usr/bin/g++",
+                "CMAKE_EXE_LINKER_FLAGS"        : "-Wl,--copy-dt-needed-entries",
+                "CMAKE_SHARED_LINKER_FLAGS"     : "-Wl,--copy-dt-needed-entries",
+                "CMAKE_MODULE_LINKER_FLAGS"     : "-Wl,--copy-dt-needed-entries",
+                "CMAKE_FIND_PACKAGE_TARGETS_GLOBAL": "ON"
+            }
+        },
+        {
+            "name": "aswf-ci-2025-environment",
+            "hidden": true,
+            "inherits": "aswf-ci-environment",
+            "environment": {
+                "OIIO_PYTHON": "/usr/local/lib/python3.11/site-packages"
+            },
+            "cacheVariables": {
+                "BOOST_PYTHON_COMPONENT_NAME": "python311",
+                "BUILD_QT_APPS": "OFF",
+                "Python3_EXECUTABLE": "/usr/local/bin/python3.11",
+                "Python3_LIBRARY": "/usr/local/lib/libpython3.11.so",
+                "Python3_INCLUDE_DIR": "/usr/local/include/python3.11",
+                "ZLIB_ROOT": "/usr/local"
+            }
+        },
+        {
+            "name": "aswf-ci-2025-release",
+            "displayName": "ASWF CI Release (aswf/ci-vfxall:2025)",
+            "inherits": "aswf-ci-2025-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE"      : "Release",
+                "CMAKE_INSTALL_PREFIX"  : "${sourceDir}/../installs/openmoonray"
+            },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "aswf-ci-2025-debug",
+            "displayName": "ASWF CI Debug (aswf/ci-vfxall:2025)",
+            "inherits": "aswf-ci-2025-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE"      : "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/../installs/openmoonray",
+                "CMAKE_C_FLAGS_DEBUG": "-Og -g1",
+                "CMAKE_CXX_FLAGS_DEBUG": "-Og -g1"
+            },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "aswf-ci-2025-clang",
+            "displayName": "ASWF CI Clang Release (aswf/ci-vfxall:2025)",
+            "inherits": "aswf-ci-2025-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE"      : "Release",
+                "CMAKE_INSTALL_PREFIX"  : "${sourceDir}/../installs/openmoonray",
+                "CMAKE_C_COMPILER"      : "/usr/local/bin/clang",
+                "CMAKE_CXX_COMPILER"    : "/usr/local/bin/clang++"
+            },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "aswf-ci-2025-sanitizer",
+            "displayName": "ASWF CI Sanitizer (aswf/ci-vfxall:2025)",
+            "inherits": "aswf-ci-2025-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE"      : "Debug",
+                "CMAKE_INSTALL_PREFIX"  : "${sourceDir}/../installs/openmoonray",
+                "CMAKE_C_COMPILER"      : "/usr/local/bin/clang",
+                "CMAKE_CXX_COMPILER"    : "/usr/local/bin/clang++",
+                "CMAKE_C_FLAGS_DEBUG"   : "-Og -g1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+                "CMAKE_CXX_FLAGS_DEBUG" : "-Og -g1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+                "CMAKE_EXE_LINKER_FLAGS"   : "-Wl,--copy-dt-needed-entries -fsanitize=address,undefined",
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--copy-dt-needed-entries -fsanitize=address,undefined",
+                "CMAKE_MODULE_LINKER_FLAGS": "-Wl,--copy-dt-needed-entries -fsanitize=address,undefined",
+                "CMAKE_CUDA_COMPILER"      : ""
+            },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "aswf-ci-2026-environment",
+            "hidden": true,
+            "inherits": "aswf-ci-environment",
+            "environment": {
+                "OIIO_PYTHON": "/usr/local/lib/python3.13/site-packages",
+                "ZLIB_ROOT": "/usr/local"
+            },
+            "cacheVariables": {
+                "BOOST_PYTHON_COMPONENT_NAME": "python313",
+                "BUILD_QT_APPS": "OFF",
+                "Python3_EXECUTABLE": "/usr/local/bin/python3.13",
+                "Python3_LIBRARY": "/usr/local/lib/libpython3.13.so",
+                "Python3_INCLUDE_DIR": "/usr/local/include/python3.13",
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.5"
+            }
+        },
+        {
+            "name": "aswf-ci-2026-release",
+            "displayName": "ASWF CI Release (aswf/ci-moonray:2026)",
+            "inherits": "aswf-ci-2026-environment",
+            "binaryDir": "$env{BUILD_DIR}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE"      : "Release",
+                "CMAKE_INSTALL_PREFIX"  : "${sourceDir}/../installs/openmoonray"
+            },
+            "generator": "Unix Makefiles"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "aswf-ci-2025-release",
+            "displayName": "ASWF CI Release (aswf/ci-vfxall:2025)",
+            "configurePreset": "aswf-ci-2025-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "aswf-ci-2025-debug",
+            "displayName": "ASWF CI Debug (aswf/ci-vfxall:2025)",
+            "configurePreset": "aswf-ci-2025-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "aswf-ci-2025-clang",
+            "displayName": "ASWF CI Clang Release (aswf/ci-vfxall:2025)",
+            "configurePreset": "aswf-ci-2025-clang",
+            "configuration": "Release"
+        },
+        {
+            "name": "aswf-ci-2025-sanitizer",
+            "displayName": "ASWF CI Sanitizer (aswf/ci-vfxall:2025)",
+            "configurePreset": "aswf-ci-2025-sanitizer",
+            "configuration": "Debug"
+        },
+        {
+            "name": "aswf-ci-2026-release",
+            "displayName": "ASWF CI Release (aswf/ci-moonray:2026)",
+            "configurePreset": "aswf-ci-2026-release",
+            "configuration": "Release"
+        }
+    ]
+}
