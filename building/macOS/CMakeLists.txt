@@ -37,8 +37,10 @@ set(THIS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # User configurable settings
 set(InstallRoot ${rootSrcDir}/../../../../installs CACHE FILEPATH "Install root for dependencies")
-set(PythonVer 3.9.6 CACHE STRING "Python version (n.m), e.g. 3.6")
-set(PythonRoot /usr CACHE FILEPATH "Location of Python install")
+set(HoudiniInstallRoot "/Applications/Houdini/Houdini22.0.408" CACHE PATH "Houdini installation root")
+set(PythonVer 3.13.10 CACHE STRING "Python version (n.m), e.g. 3.6")
+set(PythonRoot "${HoudiniInstallRoot}/Frameworks/Python.framework/Versions/3.13" CACHE FILEPATH "Location of Python install")
+set(HoudiniPython "${PythonRoot}/Resources/Python.app/Contents/MacOS/Python" CACHE FILEPATH "Houdini Python executable")
 
 # Arguments shared by every CMake-based dependency: policy floor for CMake 4,
 # find dependencies only in ${InstallRoot}, never in homebrew, and install
@@ -61,13 +63,14 @@ ExternalProject_Add(Blosc
 set(CHAIN Blosc)
 
 ExternalProject_Add(Boost
-    URL https://archives.boost.io/release/1.78.0/source/boost_1_78_0.tar.gz
-        https://downloads.sourceforge.net/project/boost/boost/1.78.0/boost_1_78_0.tar.gz
-    URL_HASH SHA256=94ced8b72956591c4775ae2207a9763d3600b30d9d7446562c552f0a14a63be7
-    UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot} --with-libraries=python,filesystem,system,thread,regex,date_time,chrono,program_options,iostreams --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
+    URL https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.gz
+        https://downloads.sourceforge.net/project/boost/boost/1.88.0/boost_1_88_0.tar.gz
+    UPDATE_COMMAND ./bootstrap.sh --prefix=${InstallRoot} --with-toolset=clang linkflags="-arch ${BOOST_ARCH}"
     CONFIGURE_COMMAND ""
     PATCH_COMMAND patch -p3 -N < ${THIS_DIR}/Boost.patch || true
-    BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam variant=release link=shared threading=multi define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
+            COMMAND patch -p1 -N < ${THIS_DIR}/Boost-no-numpy.patch || true
+        COMMAND /usr/bin/perl -0pi -e "s/boost-install boost_python boost_numpy/boost-install boost_python/" libs/python/build/Jamfile
+    BUILD_COMMAND ./b2 install ${JOBS_ARG} --user-config=${THIS_DIR}/user-config.jam --with-python --with-iostreams --with-atomic --with-chrono --with-date_time --with-filesystem --with-program_options --with-regex --with-system --with-thread variant=release link=shared threading=multi architecture=arm address-model=64 define=BOOST_UNORDERED_HAVE_PIECEWISE_CONSTRUCT=0
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
     DEPENDS ${CHAIN}
@@ -112,7 +115,7 @@ set(CHAIN MicroHttpd)
 
 ExternalProject_Add(OpenSubdiv
     GIT_REPOSITORY https://github.com/PixarAnimationStudios/OpenSubdiv
-    GIT_TAG 8ffa2b6566be10209529d7a0d1db02a0796b160c # v3_5_0
+    GIT_TAG 4951f30c00f395aa831a9fc42577cc28ce46fa81 # v3_7_0
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
@@ -123,41 +126,67 @@ ExternalProject_Add(OpenSubdiv
 )
 set(CHAIN OpenSubdiv)
 
-ExternalProject_Add(OpenEXR
-    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr
-    GIT_TAG 8bc3741131db146ad08a5b83af9e6e48f0e94a03 # v2.5.7
-    PATCH_COMMAND patch IlmBase/Half/CMakeLists.txt ${THIS_DIR}/../Imath_include_paths.patch
+ExternalProject_Add(Imath
+    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/Imath
+    GIT_TAG 1e480d11cb98b032a2dece9b9a8730512effc7f6 # v3.2.2
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
-        -DBoost_ROOT=${InstallRoot}
-        -DBUILD_SHARED_LIBS=OFF
+        -DCMAKE_BUILD_TYPE=Release
+        -DBUILD_TESTING=OFF
+        -DIMATH_INSTALL_PKG_CONFIG=ON
+    DEPENDS ${CHAIN}
+)
+set(CHAIN Imath)
+
+ExternalProject_Add(OpenEXR
+    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr
+    GIT_TAG 4b7ce9c503d0b069f58f07f915f7682c4030cbf1 # v3.4.3
+    BUILD_COMMAND make ${JOBS_ARG}
+    CMAKE_ARGS
+        ${COMMON_CMAKE_ARGS}
+        -DImath_ROOT=${InstallRoot}
+        -DImath_DIR=${InstallRoot}/lib/cmake/Imath
+        -DCMAKE_BUILD_TYPE=Release
+        -DBUILD_SHARED_LIBS=ON
+        -DOPENEXR_BUILD_TOOLS=OFF
+        -DOPENEXR_BUILD_EXAMPLES=OFF
+        -DOPENEXR_BUILD_TESTS=OFF
+        -DOPENEXR_BUILD_PYTHON=OFF
+        -DOPENEXR_INSTALL_EXAMPLES=OFF
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenEXR)
 
 ExternalProject_Add(TBB
-    URL https://github.com/oneapi-src/oneTBB/archive/2020_U3.tar.gz
-    URL_HASH SHA256=2103cc6238c935664f87680618f6684d57501d4a2fa8ea8f6c97ad6ff7dc722a
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND make ${JOBS_ARG} arch=arm64
-    INSTALL_COMMAND bash -c "cp build/*_release/libtbb*.* ${InstallRoot}/lib"
-            COMMAND bash -c "cp -r include/tbb ${InstallRoot}/include"
+    GIT_REPOSITORY https://github.com/oneapi-src/oneTBB.git
+    GIT_TAG 45587e94dfb6dfe00220c5f520020a5bc745e92f # v2022.1.0
+    BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --config Release --parallel ${N}
+    INSTALL_COMMAND ${CMAKE_COMMAND} --install <BINARY_DIR> --config Release
+    CMAKE_ARGS
+        ${COMMON_CMAKE_ARGS}
+        -DCMAKE_BUILD_TYPE=Release
+        -DTBB_TEST=OFF
+        -DTBB_EXAMPLES=OFF
+        -DTBB_STRICT=OFF
     DEPENDS ${CHAIN}
 )
 set(CHAIN TBB)
 
 ExternalProject_Add(OpenVDB
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openvdb
-    GIT_TAG ab935574cdb25c3df66b068fce2a3b0a74281c54 # v9.1.0
-    PATCH_COMMAND patch -p1 -N < ${THIS_DIR}/OpenVDB.patch || true
+    GIT_TAG 7c03e1f084873cd1b3422c7ff7aec6ee681b3b38 # v13.0.0
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
         -DBlosc_ROOT=${InstallRoot}
         -DBoost_ROOT=${InstallRoot}
         -DTBB_ROOT=${InstallRoot}
+        -DCMAKE_BUILD_TYPE=Release
+        -DOPENVDB_BUILD_BINARIES=OFF
+        -DOPENVDB_BUILD_UNITTESTS=OFF
+        -DOPENVDB_BUILD_PYTHON_MODULE=OFF
+        -DOPENVDB_BUILD_NANOVDB=OFF
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenVDB)
@@ -233,7 +262,7 @@ set(CHAIN embree)
 
 ExternalProject_Add(OpenColorIO
     GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/OpenColorIO
-    GIT_TAG 056b7b0cb0d087961e9dba75104820e44faf52a1 # v2.0.2
+    GIT_TAG 592a122b37467c3376f2387fbbdbe7b571fad39f # v2.5.0
     BUILD_COMMAND ${CMAKE_COMMAND} -E env ${POLICY_MIN_ENV} make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
@@ -245,7 +274,7 @@ ExternalProject_Add(OpenColorIO
         -DOCIO_BUILD_PYTHON=OFF
         -DBUILD_SHARED_LIBS=ON
         -DOCIO_BUILD_STATIC=OFF
-        -DCMAKE_CXX_STANDARD=17
+        -DCMAKE_CXX_STANDARD=20
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenColorIO)
@@ -286,33 +315,49 @@ set(CHAIN pybind11)
 
 ExternalProject_Add(OpenImageIO
     GIT_REPOSITORY https://github.com/OpenImageIO/oiio
-    GIT_TAG 331a323468928c8017ad048b26d47c4e57a724a7 # 2.3.20.0
+    GIT_TAG 372c57696909513a8ea97180cb34b925c4fe09e3 # v2.5.18.0
     BUILD_COMMAND make ${JOBS_ARG}
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
         -DBoost_ROOT=${InstallRoot}
         -DIMath_ROOT=${InstallRoot}
+        -DImath_DIR=${InstallRoot}/lib/cmake/Imath
         -DDISABLE_CMAKE_SEARCH_PATHS=TRUE
         -DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH=TRUE
         -DOpenEXR_ROOT=${InstallRoot}
+        -DOpenEXR_DIR=${InstallRoot}/lib/cmake/OpenEXR
+        -DOpenColorIO_ROOT=${InstallRoot}
+        -DTBB_ROOT=${InstallRoot}
+        -DCMAKE_BUILD_TYPE=Release
         -DUSE_QT=0
         -DUSE_PYTHON=1
-        -DPython_EXECUTABLE=/usr/bin/python3
+        -DPython_EXECUTABLE=${HoudiniPython}
+        -DPython_ROOT=${PythonRoot}
+        -DPython_LIBRARIES=${PythonRoot}/lib/libpython3.13.dylib
+        -DPython_INCLUDE_DIR=${PythonRoot}/include/python3.13
+        -DUSE_OPENVDB=0
+        -DUSE_FFMPEG=0
+        -DUSE_OPENCV=0
+        -DUSE_WEBP=0
+        -DUSE_DCMTK=0
+        -DUSE_OPENJPEG=0
+        -DUSE_TESTS=0
     DEPENDS ${CHAIN}
 )
 set(CHAIN OpenImageIO)
 
 ExternalProject_Add(OpenImageDenoise
-   URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.2.0/oidn-2.2.0.arm64.macos.tar.gz
-   URL_HASH SHA256=16cdaddabeb0f2af22fc8e466317c1a14a54b6ec03db2ac343e17fad40c70f3f
+   URL https://github.com/OpenImageDenoise/oidn/releases/download/v2.3.3/oidn-2.3.3.arm64.macos.tar.gz
    BUILD_COMMAND ""
    CONFIGURE_COMMAND ""
-   INSTALL_COMMAND bash -c "rm -f ../OpenImageDenoise/lib/libtbb.dylib"
+   INSTALL_COMMAND bash -c "rm -f ../OpenImageDenoise/lib/libtbb*.dylib"
            COMMAND bash -c "ditto ../OpenImageDenoise ${InstallRoot}"
    DEPENDS ${CHAIN}
 )
 set(CHAIN OpenImageDenoise)
 
+option(NO_QT "Skip building the Qt dependency" OFF)
+if(NOT NO_QT)
 ExternalProject_Add(qt5
     GIT_REPOSITORY https://code.qt.io/qt/qt5.git
     GIT_SUBMODULES_RECURSE false
@@ -327,6 +372,22 @@ ExternalProject_Add(qt5
     DEPENDS ${CHAIN}
 )
 set(CHAIN qt5)
+endif()
+
+ExternalProject_Add(MaterialX
+    GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/MaterialX
+    GIT_TAG 7b64921ef1d42f2d57871e9d2c43dc11f041f26b # v1.39.5
+    BUILD_COMMAND make ${JOBS_ARG}
+    CMAKE_ARGS
+        ${COMMON_CMAKE_ARGS}
+        -DMATERIALX_BUILD_PYTHON=OFF
+        -DMATERIALX_BUILD_TESTS=OFF
+        -DMATERIALX_BUILD_VIEWER=OFF
+        -DMATERIALX_BUILD_GRAPH_EDITOR=OFF
+        -DCMAKE_BUILD_TYPE=Release
+    DEPENDS ${CHAIN}
+)
+set(CHAIN MaterialX)
 
 if(NOT NO_USD)
     ExternalProject_Add(USD
@@ -379,6 +440,8 @@ set(CHAIN libuuid)
 
 ExternalProject_Add(OpenSSL
     GIT_REPOSITORY https://github.com/openssl/openssl.git
+    GIT_SHALLOW TRUE
+    GIT_SUBMODULES ""
     # GIT_TAG a92271e03a8d0dee507b6f1e7f49512568b2c7ad # 3.1.0 - contains a bug on Apple Silicon
     GIT_TAG 31157bc0b46e04227b8468d3e6915e4d0332777c # 3.0.8
     CONFIGURE_COMMAND ./Configure darwin64-arm64 --prefix=${InstallRoot} --openssldir=${InstallRoot} -rpath ${InstallRoot}/lib
@@ -432,4 +495,3 @@ ExternalProject_Add(GLFW
     DEPENDS ${CHAIN}
 )
 set(CHAIN GLFW)
-

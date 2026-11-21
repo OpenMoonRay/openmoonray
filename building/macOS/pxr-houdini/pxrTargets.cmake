@@ -17,14 +17,14 @@ cmake_policy(VERSION 2.6...3.21)
 # Commands may need to know the format version.
 set(CMAKE_IMPORT_FILE_VERSION 1)
 
-SET(HPYTHONLIB $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.9/lib/libpython3.9.dylib)
-SET(HPYTHONINC $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.9/include/python3.9)
+SET(HPYTHONLIB $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.13/lib/libpython3.13.dylib)
+SET(HPYTHONINC $ENV{HOUDINI_INSTALL_DIR}/Frameworks/Python.framework/Versions/3.13/include/python3.13)
 
 # Protect against multiple inclusion, which would fail when already imported targets are added once more.
 set(_targetsDefined)
 set(_targetsNotDefined)
 set(_expectedTargets)
-foreach(_expectedTarget arch tf gf js trace work plug vt ar kind sdf ndr sdr pcp usd usdGeom usdVol usdMedia usdShade usdLux usdRender usdHydra usdRi usdSkel usdUI usdUtils usdPhysics garch hf hio cameraUtil pxOsd glf hgi hgiGL hgiInterop hd hdSt hdx usdImaging usdImagingGL usdRiImaging usdSkelImaging usdVolImaging usdAppUtils usdviewq)
+foreach(_expectedTarget arch tf gf js trace work plug vt ar kind sdf sdr pcp usd usdGeom usdVol usdMedia usdShade usdLux usdRender usdHydra usdRi usdSkel usdUI usdUtils usdPhysics garch hf hio cameraUtil pxOsd glf hgi hgiGL hgiInterop hd hdsi hdSt hdx hdMtlx usdImaging usdImagingGL usdSkelImaging usdVolImaging usdAppUtils usdMtlx usdviewq)
   list(APPEND _expectedTargets ${_expectedTarget})
   if(NOT TARGET ${_expectedTarget})
     list(APPEND _targetsNotDefined ${_expectedTarget})
@@ -161,23 +161,13 @@ set_target_properties(sdf PROPERTIES
   INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
 )
 
-# Create imported target ndr
-add_library(ndr SHARED IMPORTED)
-
-set_target_properties(ndr PROPERTIES
-  INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
-  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
-  INTERFACE_LINK_LIBRARIES "tf;plug;vt;work;ar;sdf;${_BOOST_PYTHON_LIB}"
-  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
-)
-
 # Create imported target sdr
 add_library(sdr SHARED IMPORTED)
 
 set_target_properties(sdr PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
   INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
-  INTERFACE_LINK_LIBRARIES "tf;vt;ar;ndr;sdf;${_BOOST_PYTHON_LIB}"
+  INTERFACE_LINK_LIBRARIES "tf;vt;ar;sdf;${_BOOST_PYTHON_LIB}"
   INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
 )
 
@@ -235,7 +225,7 @@ add_library(usdShade SHARED IMPORTED)
 set_target_properties(usdShade PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
   INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
-  INTERFACE_LINK_LIBRARIES "tf;vt;sdf;ndr;sdr;usd;usdGeom"
+  INTERFACE_LINK_LIBRARIES "tf;vt;sdf;sdr;usd;usdGeom"
 )
 
 # Create imported target usdLux
@@ -244,7 +234,7 @@ add_library(usdLux SHARED IMPORTED)
 set_target_properties(usdLux PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
   INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
-  INTERFACE_LINK_LIBRARIES "tf;vt;ndr;sdf;usd;usdGeom;usdShade"
+  INTERFACE_LINK_LIBRARIES "tf;vt;sdf;usd;usdGeom;usdShade"
 )
 
 # Create imported target usdRender
@@ -410,6 +400,26 @@ set_target_properties(hd PROPERTIES
 )
 
 # Create imported target hdSt
+add_library(hdsi SHARED IMPORTED)
+
+set_target_properties(hdsi PROPERTIES
+  INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
+  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
+  INTERFACE_LINK_LIBRARIES "hd;tf;plug;vt;sdf;usd;usdGeom;usdShade;usdImaging"
+  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
+)
+
+# Create imported target hdMtlx
+add_library(hdMtlx SHARED IMPORTED)
+
+set_target_properties(hdMtlx PROPERTIES
+  INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
+  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
+  INTERFACE_LINK_LIBRARIES "hd;hdsi;sdr;usd;usdShade;usdMtlx"
+  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
+)
+
+# Create imported target hdSt
 add_library(hdSt SHARED IMPORTED)
 
 set_target_properties(hdSt PROPERTIES
@@ -426,6 +436,16 @@ set_target_properties(hdx PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
   INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
   INTERFACE_LINK_LIBRARIES "plug;tf;vt;gf;work;garch;glf;pxOsd;hd;hdSt;hgi;hgiInterop;cameraUtil;sdf"
+)
+
+# Create imported target usdImaging
+add_library(usdMtlx SHARED IMPORTED)
+
+set_target_properties(usdMtlx PROPERTIES
+  INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
+  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
+  INTERFACE_LINK_LIBRARIES "usd;usdShade;usdGeom;${_BOOST_PYTHON_LIB}"
+  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
 )
 
 # Create imported target usdImaging
@@ -446,16 +466,6 @@ set_target_properties(usdImagingGL PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX};${HPYTHONINC};${HPYTHONINC}"
   INTERFACE_LINK_LIBRARIES "gf;tf;plug;trace;vt;work;hio;garch;glf;hd;hdx;pxOsd;sdf;sdr;usd;usdGeom;usdHydra;usdShade;usdImaging;ar;${_BOOST_PYTHON_LIB};${HPYTHONLIB};${_DEPS_PREFIX}/lib/libtbb${CMAKE_SHARED_LIBRARY_SUFFIX}"
   INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${HPYTHONINC};${_DEPS_PREFIX}/include"
-)
-
-# Create imported target usdRiImaging
-add_library(usdRiImaging SHARED IMPORTED)
-
-set_target_properties(usdRiImaging PROPERTIES
-  INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
-  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
-  INTERFACE_LINK_LIBRARIES "gf;tf;plug;trace;vt;work;hd;pxOsd;sdf;usd;usdGeom;usdLux;usdShade;usdImaging;usdVol;ar;${_DEPS_PREFIX}/lib/libtbb${CMAKE_SHARED_LIBRARY_SUFFIX}"
-  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
 )
 
 # Create imported target usdSkelImaging
@@ -491,9 +501,9 @@ add_library(usdviewq SHARED IMPORTED)
 
 set_target_properties(usdviewq PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "PXR_PYTHON_ENABLED=1"
-  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX}"
-  INTERFACE_LINK_LIBRARIES "tf;usd;usdGeom;${_BOOST_PYTHON_LIB}"
-  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_DEPS_PREFIX}/include"
+  INTERFACE_INCLUDE_DIRECTORIES "${_INCLUDE_PREFIX};${HPYTHONINC}"
+  INTERFACE_LINK_LIBRARIES "tf;usd;usdGeom;hd;${_BOOST_PYTHON_LIB};${HPYTHONLIB}"
+  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${HPYTHONINC};${_DEPS_PREFIX}/include"
 )
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)
